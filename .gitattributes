@@ -1,0 +1,4 @@
+* eol=lf
+test/*         linguist-vendored
+lib/*          linguist-generated
+marked.min.js  linguist-generated

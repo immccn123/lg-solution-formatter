@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "NodeNext",
+    "isolatedModules": true,
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": true,
+    "sourceMap": false
+  },
+  "include": [
+    "src/*.ts"
+  ]
+}

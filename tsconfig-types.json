@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "verbatimModuleSyntax": false,
+    "isolatedModules": false,
+    "outFile": "lib/lg-solution-formatter.d.ts"
+  }
+}
