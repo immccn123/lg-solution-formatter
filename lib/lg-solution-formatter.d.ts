@@ -1,29 +1,41 @@
 declare module "Tokens" {
-    export type Token = (Tokens.Space | Tokens.Code | Tokens.Heading | Tokens.Table | Tokens.Hr | Tokens.Blockquote | Tokens.List | Tokens.ListItem | Tokens.Paragraph | Tokens.HTML | Tokens.Text | Tokens.Def | Tokens.Escape | Tokens.Tag | Tokens.Image | Tokens.Link | Tokens.Strong | Tokens.Em | Tokens.Codespan | Tokens.Br | Tokens.Del | Tokens.Generic);
+    export type Token = Tokens.Space | Tokens.Code | Tokens.Heading | Tokens.Table | Tokens.Hr | Tokens.Blockquote | Tokens.List | Tokens.ListItem | Tokens.Paragraph | Tokens.HTML | Tokens.Text | Tokens.Def | Tokens.Escape | Tokens.Tag | Tokens.Image | Tokens.Link | Tokens.Strong | Tokens.Em | Tokens.Codespan | Tokens.Br | Tokens.Del | Tokens.Generic;
     export namespace Tokens {
         interface Space {
-            type: 'space';
+            type: "space";
             raw: string;
         }
         interface Code {
-            type: 'code';
+            type: "code";
             raw: string;
-            codeBlockStyle?: 'indented' | undefined;
+            codeBlockStyle?: "indented" | undefined;
             lang?: string | undefined;
             text: string;
             escaped?: boolean;
         }
+        interface Katex {
+            type: "katex";
+            raw: string;
+            text: string;
+            displayMode: boolean;
+        }
+        interface KatexBlock {
+            type: "katexblock";
+            raw: string;
+            text: string;
+            displayMode: boolean;
+        }
         interface Heading {
-            type: 'heading';
+            type: "heading";
             raw: string;
             depth: number;
             text: string;
             tokens: Token[];
         }
         interface Table {
-            type: 'table';
+            type: "table";
             raw: string;
-            align: Array<'center' | 'left' | 'right' | null>;
+            align: Array<"center" | "left" | "right" | null>;
             header: TableCell[];
             rows: TableCell[][];
         }
@@ -32,25 +44,25 @@ declare module "Tokens" {
             tokens: Token[];
         }
         interface Hr {
-            type: 'hr';
+            type: "hr";
             raw: string;
         }
         interface Blockquote {
-            type: 'blockquote';
+            type: "blockquote";
             raw: string;
             text: string;
             tokens: Token[];
         }
         interface List {
-            type: 'list';
+            type: "list";
             raw: string;
             ordered: boolean;
-            start: number | '';
+            start: number | "";
             loose: boolean;
             items: ListItem[];
         }
         interface ListItem {
-            type: 'list_item';
+            type: "list_item";
             raw: string;
             task: boolean;
             checked?: boolean | undefined;
@@ -59,39 +71,39 @@ declare module "Tokens" {
             tokens: Token[];
         }
         interface Paragraph {
-            type: 'paragraph';
+            type: "paragraph";
             raw: string;
             pre?: boolean | undefined;
             text: string;
             tokens: Token[];
         }
         interface HTML {
-            type: 'html';
+            type: "html";
             raw: string;
             pre: boolean;
             text: string;
             block: boolean;
         }
         interface Text {
-            type: 'text';
+            type: "text";
             raw: string;
             text: string;
             tokens?: Token[];
         }
         interface Def {
-            type: 'def';
+            type: "def";
             raw: string;
             tag: string;
             href: string;
             title: string;
         }
         interface Escape {
-            type: 'escape';
+            type: "escape";
             raw: string;
             text: string;
         }
         interface Tag {
-            type: 'text' | 'html';
+            type: "text" | "html";
             raw: string;
             inLink: boolean;
             inRawBlock: boolean;
@@ -99,7 +111,7 @@ declare module "Tokens" {
             block: boolean;
         }
         interface Link {
-            type: 'link';
+            type: "link";
             raw: string;
             href: string;
             title?: string | null;
@@ -107,35 +119,35 @@ declare module "Tokens" {
             tokens: Token[];
         }
         interface Image {
-            type: 'image';
+            type: "image";
             raw: string;
             href: string;
             title: string | null;
             text: string;
         }
         interface Strong {
-            type: 'strong';
+            type: "strong";
             raw: string;
             text: string;
             tokens: Token[];
         }
         interface Em {
-            type: 'em';
+            type: "em";
             raw: string;
             text: string;
             tokens: Token[];
         }
         interface Codespan {
-            type: 'codespan';
+            type: "codespan";
             raw: string;
             text: string;
         }
         interface Br {
-            type: 'br';
+            type: "br";
             raw: string;
         }
         interface Del {
-            type: 'del';
+            type: "del";
             raw: string;
             text: string;
             tokens: Token[];
@@ -147,7 +159,7 @@ declare module "Tokens" {
             tokens?: Token[] | undefined;
         }
     }
-    export type Links = Record<string, Pick<Tokens.Link | Tokens.Image, 'href' | 'title'>>;
+    export type Links = Record<string, Pick<Tokens.Link | Tokens.Image, "href" | "title">>;
     export type TokensList = Token[] & {
         links: Links;
     };
@@ -231,7 +243,7 @@ declare module "Renderer" {
         tablerow(content: string): string;
         tablecell(content: string, flags: {
             header: boolean;
-            align: 'center' | 'left' | 'right' | null;
+            align: "center" | "left" | "right" | null;
         }): string;
         /**
          * span level renderer
@@ -243,6 +255,7 @@ declare module "Renderer" {
         del(text: string): string;
         link(href: string, title: string | null | undefined, text: string): string;
         image(href: string, title: string | null, text: string): string;
+        katex(text: string, displayMode: boolean): string;
         text(text: string): string;
     }
 }
@@ -260,6 +273,7 @@ declare module "TextRenderer" {
         text(text: string): string;
         link(href: string, title: string | null | undefined, text: string): string;
         image(href: string, title: string | null, text: string): string;
+        katex(text: string): string;
         br(): string;
     }
 }
@@ -329,6 +343,7 @@ declare module "Tokenizer" {
         constructor(options?: MarkedOptions);
         space(src: string): Tokens.Space | undefined;
         code(src: string): Tokens.Code | undefined;
+        katexBlock(src: string): Tokens.KatexBlock | undefined;
         fences(src: string): Tokens.Code | undefined;
         heading(src: string): Tokens.Heading | undefined;
         hr(src: string): Tokens.Hr | undefined;
@@ -351,6 +366,7 @@ declare module "Tokenizer" {
         autolink(src: string): Tokens.Link | undefined;
         url(src: string): Tokens.Link | undefined;
         inlineText(src: string): Tokens.Text | undefined;
+        katex(src: string): Tokens.Katex | undefined;
     }
 }
 declare module "Lexer" {

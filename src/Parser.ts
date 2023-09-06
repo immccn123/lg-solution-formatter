@@ -178,6 +178,11 @@ export class _Parser {
           );
           continue;
         }
+        case 'katexblock': {
+          const katexToken = token as Tokens.KatexBlock;
+          mdText += this.renderer.katex(katexToken.text, katexToken.displayMode);
+          continue;
+        }
         case 'text': {
           let textToken = token as Tokens.Text;
           let body = textToken.tokens
@@ -390,6 +395,18 @@ export class _Parser {
         case 'text': {
           const textToken = token as Tokens.Text;
           const renderedText = renderer.text(textToken.text);
+          ({ mdText, displayText, isTrimed } = this.trimToken(
+            mdText,
+            displayText,
+            renderedText,
+            renderedText,
+            isTrimed
+          ));
+          break;
+        }
+        case 'katex': {
+          const textToken = token as Tokens.Katex;
+          const renderedText = textToken.raw;
           ({ mdText, displayText, isTrimed } = this.trimToken(
             mdText,
             displayText,

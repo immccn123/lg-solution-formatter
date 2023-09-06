@@ -36,6 +36,10 @@ export class _TextRenderer {
     return '' + text;
   }
 
+  katex(text: string) {
+    return text.replace(/\*/, "\\times ");
+  }
+
   br() {
     return '';
   }
