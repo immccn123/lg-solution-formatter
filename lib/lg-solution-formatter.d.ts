@@ -171,7 +171,7 @@ declare module "rules" {
     }
     type BlockRuleNames = 'newline' | 'code' | 'fences' | 'hr' | 'heading' | 'blockquote' | 'list' | 'html' | 'def' | 'lheading' | '_paragraph' | 'text' | '_label' | '_title' | 'bullet' | 'listItemStart' | '_tag' | '_comment' | 'paragraph' | 'uote';
     type BlockSubRuleNames = 'normal' | 'gfm' | 'pedantic';
-    type InlineRuleNames = 'escape' | 'autolink' | 'tag' | 'link' | 'reflink' | 'nolink' | 'reflinkSearch' | 'code' | 'br' | 'text' | '_punctuation' | 'punctuation' | 'blockSkip' | 'escapedEmSt' | '_comment' | '_escapes' | '_scheme' | '_email' | '_attribute' | '_label' | '_href' | '_title' | 'strong' | '_extended_email' | '_backpedal';
+    type InlineRuleNames = 'escape' | 'autolink' | 'tag' | 'link' | 'reflink' | 'nolink' | 'reflinkSearch' | 'code' | 'br' | 'text' | 'katex' | '_punctuation' | 'punctuation' | 'blockSkip' | 'escapedEmSt' | '_comment' | '_escapes' | '_scheme' | '_email' | '_attribute' | '_label' | '_href' | '_title' | 'strong' | '_extended_email' | '_backpedal';
     type InlineSubRuleNames = 'gfm' | 'emStrong' | 'normal' | 'pedantic' | 'breaks';
     /**
      * Block-Level Grammar

@@ -244,7 +244,6 @@ export class _Lexer {
 
       // katex block
       if ((token = this.tokenizer.katexBlock(src))) {
-        console.log("Katex Block");
         src = src.substring(token.raw.length);
         tokens.push(token);
         continue;
@@ -403,10 +402,8 @@ export class _Lexer {
         continue;
       }
 
-      console.log("cutted ", src);
-      console.log("=".repeat(12));
       if ((token = this.tokenizer.katex(src))) {
-        console.log("Matched KaTeX.");
+        console.log("Token", token.raw);
         src = src.substring(token.raw.length);
         tokens.push(token);
         continue;
@@ -495,13 +492,12 @@ export class _Lexer {
       }
 
       const katexCutter = (src: string) => {
-        const katexInlineStartRule = /(?<=\s|^)\${1,2}(?!\$)/;
-        const katexInlineRule =
-          /^(\${1,2})(?!\$)((?:\\.|[^\\\n])+?)(?<!\$)\1(?=[\s?!\.,:]|$)/;
+        const katexInlineStartRule = /\${1,2}(?!\$)/;
         const match = src.match(katexInlineStartRule);
+        console.log("match", src, match);
         if (!match) return;
         const possibleKatex = src.substring(match.index as number);
-        if (possibleKatex.match(katexInlineRule)) {
+        if (possibleKatex.match(inline.katex)) {
           return match.index;
         }
       };
@@ -526,6 +522,7 @@ export class _Lexer {
 
       let res = katexCutter(src.slice(1));
       if (res) cutSrc = src.substring(0, res + 1);
+      // console.log("Cutted", res);
 
       if ((token = this.tokenizer.inlineText(cutSrc))) {
         src = src.substring(token.raw.length);

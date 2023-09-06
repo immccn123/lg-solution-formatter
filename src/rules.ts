@@ -44,6 +44,7 @@ type InlineRuleNames =
     | 'code'
     | 'br'
     | 'text'
+    | 'katex'
     | '_punctuation'
     | 'punctuation'
     | 'blockSkip'
@@ -243,7 +244,7 @@ export const inline: Record<InlineRuleNames, Rule> & Record<InlineSubRuleNames, 
     rDelimUnd: /^[^_*]*?\*\*[^_*]*?_[^_*]*?(?=\*\*)|[^_]+(?=[^_])|(?!_)[punct](_+)(?=[\s]|$)|[^punct\s](_+)(?!_)(?=[punct\s]|$)|(?!_)[punct\s](_+)(?=[^punct\s])|[\s](_+)(?!_)(?=[punct])|(?!_)[punct](_+)(?!_)(?=[punct])/ // ^- Not allowed for _
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
-  katex: /^(\${1,2})(?!\$)((?:\\.|[^\\\n])+?)(?<!\$)\1(?=[\s?!\.,:]|$)/,
+  katex: /^(\${1,2})(?!\$)((?:\\.|[^\\\n])+?)(?<!\$)\1/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
   del: noopTest,
   text: /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,

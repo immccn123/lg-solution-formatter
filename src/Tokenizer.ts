@@ -889,6 +889,7 @@ export class _Tokenizer {
 
   katex(src: string): Tokens.Katex | undefined {
     const match = this.rules.inline.katex.exec(src);
+    console.log("src", src, "matched", match);
     if (match) {
       return {
         type: 'katex',

@@ -125,7 +125,7 @@ export class _Renderer {
     return (
       cover +
       (displayMode ? "\n" : " ") +
-      text.replace(/\*/g, "\\times") +
+      text.replace(/\*/g, "\\times ").replace(/  /g, " ") +
       (displayMode ? "\n" : " ") +
       cover
     );
