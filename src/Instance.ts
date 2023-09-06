@@ -330,7 +330,6 @@ export class SolutionFormatter {
           this.walkTokens(tokens, opt.walkTokens);
         }
         let html = parser(tokens, opt).mdText;
-        console.log(html); // ===========================
         if (opt.hooks) {
           html = opt.hooks.postprocess(html) as string;
         }

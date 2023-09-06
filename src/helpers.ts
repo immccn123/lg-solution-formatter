@@ -1,4 +1,4 @@
-import type { Rule } from './rules.ts';
+import type { Rule } from "./rules.ts";
 
 /**
  * Helpers
@@ -10,38 +10,38 @@ export function unescape(html: string) {
   // explicitly match decimal, hex, and named HTML entities
   return html.replace(unescapeTest, (_, n) => {
     n = n.toLowerCase();
-    if (n === 'colon') return ':';
-    if (n.charAt(0) === '#') {
-      return n.charAt(1) === 'x'
+    if (n === "colon") return ":";
+    if (n.charAt(0) === "#") {
+      return n.charAt(1) === "x"
         ? String.fromCharCode(parseInt(n.substring(2), 16))
         : String.fromCharCode(+n.substring(1));
     }
-    return '';
+    return "";
   });
 }
 
 const caret = /(^|[^\[])\^/g;
 
 export function edit(regex: Rule, opt?: string) {
-  regex = typeof regex === 'string' ? regex : regex.source;
-  opt = opt || '';
+  regex = typeof regex === "string" ? regex : regex.source;
+  opt = opt || "";
   const obj = {
     replace: (name: string | RegExp, val: string | RegExp) => {
-      val = typeof val === 'object' && 'source' in val ? val.source : val;
-      val = val.replace(caret, '$1');
+      val = typeof val === "object" && "source" in val ? val.source : val;
+      val = val.replace(caret, "$1");
       regex = (regex as string).replace(name, val);
       return obj;
     },
     getRegex: () => {
       return new RegExp(regex, opt);
-    }
+    },
   };
   return obj;
 }
 
 export function cleanUrl(href: string) {
   try {
-    href = encodeURI(href).replace(/%25/g, '%');
+    href = encodeURI(href).replace(/%25/g, "%");
   } catch (e) {
     return null;
   }
@@ -56,14 +56,14 @@ export function splitCells(tableRow: string, count?: number) {
   const row = tableRow.replace(/\|/g, (match, offset, str) => {
       let escaped = false;
       let curr = offset;
-      while (--curr >= 0 && str[curr] === '\\') escaped = !escaped;
+      while (--curr >= 0 && str[curr] === "\\") escaped = !escaped;
       if (escaped) {
         // odd number of slashes means | is escaped
         // so we leave it alone
-        return '|';
+        return "|";
       } else {
         // add space before unescaped |
-        return ' |';
+        return " |";
       }
     }),
     cells = row.split(/ \|/);
@@ -81,13 +81,13 @@ export function splitCells(tableRow: string, count?: number) {
     if (cells.length > count) {
       cells.splice(count);
     } else {
-      while (cells.length < count) cells.push('');
+      while (cells.length < count) cells.push("");
     }
   }
 
   for (; i < cells.length; i++) {
     // leading or trailing whitespace is ignored per the gfm spec
-    cells[i] = cells[i].trim().replace(/\\\|/g, '|');
+    cells[i] = cells[i].trim().replace(/\\\|/g, "|");
   }
   return cells;
 }
@@ -103,7 +103,7 @@ export function splitCells(tableRow: string, count?: number) {
 export function rtrim(str: string, c: string, invert?: boolean) {
   const l = str.length;
   if (l === 0) {
-    return '';
+    return "";
   }
 
   // Length of suffix matching the invert condition.
@@ -131,7 +131,7 @@ export function findClosingBracket(str: string, b: string) {
 
   let level = 0;
   for (let i = 0; i < str.length; i++) {
-    if (str[i] === '\\') {
+    if (str[i] === "\\") {
       i++;
     } else if (str[i] === b[0]) {
       level++;
@@ -145,28 +145,26 @@ export function findClosingBracket(str: string, b: string) {
   return -1;
 }
 
+// https://stackoverflow.com/questions/21109011/javascript-unicode-string-chinese-character-but-no-punctuation
+// https://stackoverflow.com/questions/19899554/unicode-range-for-japanese
 const CJKRegexStr =
-  /[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
+  /[\x31F0-\x31FF\x3220-\x3243\x3280-\x337F]|[\u30A0-\u30FF]|[\u3041-\u3096]|[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
 const CJKPunctuation = /[，。【】「」『』❲❳［］（）《》！？“”、～；：]/;
 const nonCJKBracket = /[\(\)\[\]\{\}]/;
 const nonCJKLBracket = /[\(\[\{]/;
+const toFullWidth = /[!\?\.,:;]/;
 
-export const CJKRgx = (regexStr: string): RegExp => {
-  return RegExp(regexStr.replace('{CJK}', CJKRegexStr.source));
+export const CJKRgx = (regexStr: string, flags?: string): RegExp => {
+  return RegExp(regexStr.replaceAll("{CJK}", CJKRegexStr.source), flags);
 };
 
 export const isCJK = (char: string) => CJKRegexStr.test(char);
-export const isSpace = (char: string) => char === ' ';
+export const isSpace = (char: string) => char === " ";
 export const isPunctuation = (char: string) => CJKPunctuation.test(char);
 export const isNonCJKBracket = (char: string) => nonCJKBracket.test(char);
 export const isNonCJKLBracket = (char: string) => nonCJKLBracket.test(char);
 export const isNonCJKRBracket = (char: string) =>
   nonCJKBracket.test(char) && !nonCJKLBracket.test(char);
-
-export const removeFrontSpace = (str: string) =>
-  str.replace(/\s*([\S\s]+)/, '$1');
-export const removeEndSpace = (str: string) =>
-  str.replace(/([\S\s]+)\s*/, '$1');
 
 export const shouldAddSpace = (last: string, now: string) => {
   // 中文标点
@@ -207,33 +205,66 @@ export const shouldRemoveSpace = (last?: string, next?: string) => {
 };
 
 export const shouldFullWidth = (last: string, now: string) => {
-  if (isCJK(last)) {
-    return (() => {
-      switch (now) {
-        case '.':
-        case ',':
-        case ':':
-        case ';':
-          return true;
-        default:
-          return false;
-      }
-    })();
-  }
+  if (isCJK(last)) return toFullWidth.test(now);
   return false;
 };
 
+export const getFullWidth = (now: string) => {
+  return (() => {
+    switch (now) {
+      case ".":
+        return "。";
+      case ",":
+        return "，";
+      case ":":
+        return "：";
+      case ";":
+        return "；";
+      case "!":
+        return "！";
+      case "?":
+        return "？";
+      default:
+        return now;
+    }
+  })();
+};
+
+export interface fullWidthReapceRule {
+  match: RegExp;
+  target: string;
+}
+
+export const fullWidthReapceRules: fullWidthReapceRule[] = [
+  { match: CJKRgx("(\\. )({CJK})", "g"), target: "。$2" },
+  { match: CJKRgx("(\\? )({CJK})", "g"), target: "？$2" },
+  { match: CJKRgx("(, )({CJK})", "g"), target: "，$2" },
+  { match: CJKRgx("(; )({CJK})", "g"), target: "；$2" },
+  { match: CJKRgx("(: )({CJK})", "g"), target: "：$2" },
+  { match: CJKRgx("(! )({CJK})", "g"), target: "！$2" },
+];
+
 // 先把内部的字符串格式化。
 export const formatString = (text: string): string => {
-  let out = '';
+  let out = "";
   for (let i = 0; i < text.length; i++) {
-    if (i > 0 && shouldAddSpace(text[i - 1], text[i])) {
-      out += ' ';
+    // CJK + halfWidth
+    let isReplaced = false;
+    if (i > 0 && shouldFullWidth(text[i - 1], text[i])) {
+      out += getFullWidth(text[i]);
+      isReplaced = true;
     }
-    if (text[i] === ' ') {
-      if (shouldRemoveSpace(text[i - 1], text[i + 1])) continue;
+    if (i > 0 && shouldAddSpace(out[out.length - 1], text[i])) {
+      out += " ";
     }
-    out += text[i];
+    if (text[i] === " ") {
+      if (shouldRemoveSpace(out[out.length - 1], text[i + 1])) continue;
+    }
+    if (!isReplaced) out += text[i];
+  }
+  for (const i in fullWidthReapceRules) {
+    const rule = fullWidthReapceRules[i];
+    out = out.replace(rule.match, rule.target);
   }
   return out;
 };

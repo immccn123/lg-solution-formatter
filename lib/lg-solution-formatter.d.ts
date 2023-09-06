@@ -192,19 +192,23 @@ declare module "helpers" {
      */
     export function rtrim(str: string, c: string, invert?: boolean): string;
     export function findClosingBracket(str: string, b: string): number;
-    export const CJKRgx: (regexStr: string) => RegExp;
+    export const CJKRgx: (regexStr: string, flags?: string) => RegExp;
     export const isCJK: (char: string) => boolean;
     export const isSpace: (char: string) => boolean;
     export const isPunctuation: (char: string) => boolean;
     export const isNonCJKBracket: (char: string) => boolean;
     export const isNonCJKLBracket: (char: string) => boolean;
     export const isNonCJKRBracket: (char: string) => boolean;
-    export const removeFrontSpace: (str: string) => string;
-    export const removeEndSpace: (str: string) => string;
     export const shouldAddSpace: (last: string, now: string) => boolean;
     export const shouldAddSpaceBetweenTokens: (last: string, now: string, lastRemoveSpace: boolean) => boolean;
     export const shouldRemoveSpace: (last?: string, next?: string) => boolean;
     export const shouldFullWidth: (last: string, now: string) => boolean;
+    export const getFullWidth: (now: string) => string;
+    export interface fullWidthReapceRule {
+        match: RegExp;
+        target: string;
+    }
+    export const fullWidthReapceRules: fullWidthReapceRule[];
     export const formatString: (text: string) => string;
 }
 declare module "Renderer" {
@@ -296,7 +300,7 @@ declare module "Parser" {
             displayText: string;
             isTrimed: boolean;
         };
-        trimToken(mdText: string | undefined, displayText: string, markdownText: string, newDisplayText: string, isTrimed: boolean): {
+        trimToken(mdText: string, displayText: string, markdownText: string, newDisplayText: string, isTrimed: boolean): {
             mdText: string;
             isTrimed: boolean;
             displayText: string;

@@ -1,7 +1,7 @@
 import { _Renderer } from './Renderer.ts';
 import { _TextRenderer } from './TextRenderer.ts';
 import { _defaults } from './defaults.ts';
-import { shouldAddSpaceBetweenTokens, unescape } from './helpers.ts';
+import { getFullWidth, shouldAddSpaceBetweenTokens, shouldFullWidth, unescape } from './helpers.ts';
 import type { Token, Tokens } from './Tokens.ts';
 import type { MarkedOptions } from './MarkedOptions.ts';
 
@@ -211,13 +211,12 @@ export class _Parser {
   }
 
   trimToken(
-    mdText: string | undefined,
+    mdText: string,
     displayText: string,
     markdownText: string,
     newDisplayText: string,
     isTrimed: boolean
   ) {
-    if (!mdText) mdText = '';
     if (
       displayText.length - 1 >= 0
       && shouldAddSpaceBetweenTokens(
