@@ -5,12 +5,20 @@
   "root": true,
   "rules": {
     "semi": ["error", "always"],
-    "indent": ["error", 2, {
-      "SwitchCase": 1,
-      "VariableDeclarator": { "var": 2 },
-      "outerIIFEBody": 0
-    }],
-    "operator-linebreak": ["error", "before", { "overrides": { "=": "after" } }],
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1,
+        "VariableDeclarator": { "var": 2 },
+        "outerIIFEBody": 0
+      }
+    ],
+    "operator-linebreak": [
+      "error",
+      "before",
+      { "overrides": { "=": "after" } }
+    ],
     "space-before-function-paren": ["error", "never"],
     "no-cond-assign": "off",
     "no-useless-escape": "off",
@@ -25,7 +33,7 @@
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-namespace": "off",
-    "@typescript-eslint/no-unused-vars":  ["error", { "args": "none" }]
+    "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }]
   },
   "env": {
     "node": true

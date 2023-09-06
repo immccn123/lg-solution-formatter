@@ -1,3 +1,5 @@
+import { formatKatex } from './helpers.ts';
+
 /**
  * TextRenderer
  * returns only the textual part of the token
@@ -37,7 +39,7 @@ export class _TextRenderer {
   }
 
   katex(text: string) {
-    return text.replace(/\*/, "\\times ");
+    return formatKatex(text);
   }
 
   br() {

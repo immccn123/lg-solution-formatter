@@ -9,7 +9,7 @@ import { promises } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { createRequire } from 'node:module';
-import { marked } from '../lib/lg-solution-formatter.esm.js';
+import { solFormatter } from '../lib/lg-solution-formatter.esm.js';
 
 const { access, readFile, writeFile } = promises;
 const require = createRequire(import.meta.url);
@@ -32,11 +32,11 @@ export async function main(nodeProcess) {
     };
 
     const __dirname = dirname(fileURLToPath(import.meta.url));
-    const helpText = await readFile(resolve(__dirname, '../man/marked.1.txt'), 'utf8');
+    const helpText = await readFile(resolve(__dirname, '../man/lg-solution-formatter.1.txt'), 'utf8');
 
     // eslint-disable-next-line promise/param-names
     await new Promise(res => {
-      spawn('man', [resolve(__dirname, '../man/marked.1')], options)
+      spawn('man', [resolve(__dirname, '../man/lg-solution-formatter.1')], options)
         .on('error', () => {
           console.log(helpText);
         })
@@ -123,15 +123,15 @@ export async function main(nodeProcess) {
         default:
           if (arg.indexOf('--') === 0) {
             opt = camelize(arg.replace(/^--(no-)?/, ''));
-            if (!marked.defaults.hasOwnProperty(opt)) {
+            if (!solFormatter.defaults.hasOwnProperty(opt)) {
               continue;
             }
             if (arg.indexOf('--no-') === 0) {
-              options[opt] = typeof marked.defaults[opt] !== 'boolean'
+              options[opt] = typeof solFormatter.defaults[opt] !== 'boolean'
                 ? null
                 : false;
             } else {
-              options[opt] = typeof marked.defaults[opt] !== 'boolean'
+              options[opt] = typeof solFormatter.defaults[opt] !== 'boolean'
                 ? argv.shift()
                 : true;
             }
@@ -182,9 +182,9 @@ export async function main(nodeProcess) {
       }
 
       if (typeof markedConfig === 'function') {
-        markedConfig(marked);
+        markedConfig(solFormatter);
       } else {
-        marked.use(markedConfig);
+        solFormatter.use(markedConfig);
       }
     }
 
@@ -212,8 +212,8 @@ export async function main(nodeProcess) {
     }
 
     const html = tokens
-      ? JSON.stringify(marked.lexer(data, options), null, 2)
-      : await marked.parse(data, options);
+      ? JSON.stringify(solFormatter.lexer(data, options), null, 2)
+      : await solFormatter.parse(data, options);
 
     if (output) {
       return await writeFile(output, html);
@@ -262,7 +262,7 @@ export async function main(nodeProcess) {
     nodeProcess.exit(0);
   } catch (err) {
     if (err.code === 'ENOENT') {
-      nodeProcess.stderr.write('marked: output to ' + err.path + ': No such directory');
+      nodeProcess.stderr.write('solFormatter: output to ' + err.path + ': No such directory');
     }
     nodeProcess.stderr.write(err);
     return nodeProcess.exit(1);

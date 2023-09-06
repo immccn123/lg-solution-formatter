@@ -1,9 +1,9 @@
-import { _Tokenizer } from "./Tokenizer.ts";
-import { _defaults } from "./defaults.ts";
-import { block, inline } from "./rules.ts";
-import type { Token, TokensList, Tokens } from "./Tokens.ts";
-import type { MarkedOptions, TokenizerExtension } from "./MarkedOptions.ts";
-import type { Rules } from "./rules.ts";
+import { _Tokenizer } from './Tokenizer.ts';
+import { _defaults } from './defaults.ts';
+import { block, inline } from './matchRules.ts';
+import type { Token, TokensList, Tokens } from './Tokens.ts';
+import type { MarkedOptions, TokenizerExtension } from './MarkedOptions.ts';
+import type { Rules } from './matchRules.ts';
 
 /**
  * Block Lexer
@@ -34,12 +34,12 @@ export class _Lexer {
     this.state = {
       inLink: false,
       inRawBlock: false,
-      top: true,
+      top: true
     };
 
     const rules = {
       block: block.normal,
-      inline: inline.normal,
+      inline: inline.normal
     };
 
     if (this.options.pedantic) {
@@ -62,7 +62,7 @@ export class _Lexer {
   static get rules(): Rules {
     return {
       block,
-      inline,
+      inline
     };
   }
 
@@ -86,7 +86,7 @@ export class _Lexer {
    * Preprocessing
    */
   lex(src: string) {
-    src = src.replace(/\r\n|\r/g, "\n");
+    src = src.replace(/\r\n|\r/g, '\n');
 
     this.blockTokens(src, this.tokens);
 
@@ -105,10 +105,10 @@ export class _Lexer {
   blockTokens(src: string, tokens?: TokensList): TokensList;
   blockTokens(src: string, tokens: Token[] = []) {
     if (this.options.pedantic) {
-      src = src.replace(/\t/g, "    ").replace(/^ +$/gm, "");
+      src = src.replace(/\t/g, '    ').replace(/^ +$/gm, '');
     } else {
       src = src.replace(/^( *)(\t+)/gm, (_, leading, tabs) => {
-        return leading + "    ".repeat(tabs.length);
+        return leading + '    '.repeat(tabs.length);
       });
     }
 
@@ -119,10 +119,10 @@ export class _Lexer {
 
     while (src) {
       if (
-        this.options.extensions &&
-        this.options.extensions.block &&
-        this.options.extensions.block.some(
-          (extTokenizer: TokenizerExtension["tokenizer"]) => {
+        this.options.extensions
+        && this.options.extensions.block
+        && this.options.extensions.block.some(
+          (extTokenizer: TokenizerExtension['tokenizer']) => {
             if ((token = extTokenizer.call({ lexer: this }, src, tokens))) {
               src = src.substring(token.raw.length);
               tokens.push(token);
@@ -141,7 +141,7 @@ export class _Lexer {
         if (token.raw.length === 1 && tokens.length > 0) {
           // if there's a single \n as a spacer, it's terminating the last line,
           // so move it there so that we don't get unecessary paragraph tags
-          tokens[tokens.length - 1].raw += "\n";
+          tokens[tokens.length - 1].raw += '\n';
         } else {
           tokens.push(token);
         }
@@ -154,11 +154,11 @@ export class _Lexer {
         lastToken = tokens[tokens.length - 1];
         // An indented code block cannot interrupt a paragraph.
         if (
-          lastToken &&
-          (lastToken.type === "paragraph" || lastToken.type === "text")
+          lastToken
+          && (lastToken.type === 'paragraph' || lastToken.type === 'text')
         ) {
-          lastToken.raw += "\n" + token.raw;
-          lastToken.text += "\n" + token.text;
+          lastToken.raw += '\n' + token.raw;
+          lastToken.text += '\n' + token.text;
           this.inlineQueue[this.inlineQueue.length - 1].src = lastToken.text;
         } else {
           tokens.push(token);
@@ -213,16 +213,16 @@ export class _Lexer {
         src = src.substring(token.raw.length);
         lastToken = tokens[tokens.length - 1];
         if (
-          lastToken &&
-          (lastToken.type === "paragraph" || lastToken.type === "text")
+          lastToken
+          && (lastToken.type === 'paragraph' || lastToken.type === 'text')
         ) {
-          lastToken.raw += "\n" + token.raw;
-          lastToken.text += "\n" + token.raw;
+          lastToken.raw += '\n' + token.raw;
+          lastToken.text += '\n' + token.raw;
           this.inlineQueue[this.inlineQueue.length - 1].src = lastToken.text;
         } else if (!this.tokens.links[token.tag]) {
           this.tokens.links[token.tag] = {
             href: token.href,
-            title: token.title,
+            title: token.title
           };
         }
         continue;
@@ -244,7 +244,6 @@ export class _Lexer {
 
       // katex block
       if ((token = this.tokenizer.katexBlock(src))) {
-        console.log("Katex Block");
         src = src.substring(token.raw.length);
         tokens.push(token);
         continue;
@@ -259,7 +258,7 @@ export class _Lexer {
         let tempStart;
         this.options.extensions.startBlock.forEach((getStartIndex) => {
           tempStart = getStartIndex.call({ lexer: this }, tempSrc);
-          if (typeof tempStart === "number" && tempStart >= 0) {
+          if (typeof tempStart === 'number' && tempStart >= 0) {
             startIndex = Math.min(startIndex, tempStart);
           }
         });
@@ -276,9 +275,9 @@ export class _Lexer {
 
       if (this.state.top && (token = this.tokenizer.paragraph(cutSrc))) {
         lastToken = tokens[tokens.length - 1];
-        if (lastParagraphClipped && lastToken.type === "paragraph") {
-          lastToken.raw += "\n" + token.raw;
-          lastToken.text += "\n" + token.text;
+        if (lastParagraphClipped && lastToken.type === 'paragraph') {
+          lastToken.raw += '\n' + token.raw;
+          lastToken.text += '\n' + token.text;
           this.inlineQueue.pop();
           this.inlineQueue[this.inlineQueue.length - 1].src = lastToken.text;
         } else {
@@ -293,9 +292,9 @@ export class _Lexer {
       if ((token = this.tokenizer.text(src))) {
         src = src.substring(token.raw.length);
         lastToken = tokens[tokens.length - 1];
-        if (lastToken && lastToken.type === "text") {
-          lastToken.raw += "\n" + token.raw;
-          lastToken.text += "\n" + token.text;
+        if (lastToken && lastToken.type === 'text') {
+          lastToken.raw += '\n' + token.raw;
+          lastToken.text += '\n' + token.text;
           this.inlineQueue.pop();
           this.inlineQueue[this.inlineQueue.length - 1].src = lastToken.text;
         } else {
@@ -305,7 +304,7 @@ export class _Lexer {
       }
 
       if (src) {
-        const errMsg = "Infinite loop on byte: " + src.charCodeAt(0);
+        const errMsg = 'Infinite loop on byte: ' + src.charCodeAt(0);
         if (this.options.silent) {
           console.error(errMsg);
           break;
@@ -340,18 +339,18 @@ export class _Lexer {
       const links = Object.keys(this.tokens.links);
       if (links.length > 0) {
         while (
-          (match = this.tokenizer.rules.inline.reflinkSearch.exec(maskedSrc)) !=
-          null
+          (match = this.tokenizer.rules.inline.reflinkSearch.exec(maskedSrc))
+          != null
         ) {
           if (
-            links.includes(match[0].slice(match[0].lastIndexOf("[") + 1, -1))
+            links.includes(match[0].slice(match[0].lastIndexOf('[') + 1, -1))
           ) {
             maskedSrc =
-              maskedSrc.slice(0, match.index) +
-              "[" +
-              "a".repeat(match[0].length - 2) +
-              "]" +
-              maskedSrc.slice(
+              maskedSrc.slice(0, match.index)
+              + '['
+              + 'a'.repeat(match[0].length - 2)
+              + ']'
+              + maskedSrc.slice(
                 this.tokenizer.rules.inline.reflinkSearch.lastIndex
               );
           }
@@ -363,35 +362,35 @@ export class _Lexer {
       (match = this.tokenizer.rules.inline.blockSkip.exec(maskedSrc)) != null
     ) {
       maskedSrc =
-        maskedSrc.slice(0, match.index) +
-        "[" +
-        "a".repeat(match[0].length - 2) +
-        "]" +
-        maskedSrc.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);
+        maskedSrc.slice(0, match.index)
+        + '['
+        + 'a'.repeat(match[0].length - 2)
+        + ']'
+        + maskedSrc.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);
     }
 
     // Mask out escaped characters
     while (
-      (match = this.tokenizer.rules.inline.anyPunctuation.exec(maskedSrc)) !=
-      null
+      (match = this.tokenizer.rules.inline.anyPunctuation.exec(maskedSrc))
+      != null
     ) {
       maskedSrc =
-        maskedSrc.slice(0, match.index) +
-        "++" +
-        maskedSrc.slice(this.tokenizer.rules.inline.anyPunctuation.lastIndex);
+        maskedSrc.slice(0, match.index)
+        + '++'
+        + maskedSrc.slice(this.tokenizer.rules.inline.anyPunctuation.lastIndex);
     }
 
     while (src) {
       if (!keepPrevChar) {
-        prevChar = "";
+        prevChar = '';
       }
       keepPrevChar = false;
 
       // extensions
       if (
-        this.options.extensions &&
-        this.options.extensions.inline &&
-        this.options.extensions.inline.some((extTokenizer) => {
+        this.options.extensions
+        && this.options.extensions.inline
+        && this.options.extensions.inline.some((extTokenizer) => {
           if ((token = extTokenizer.call({ lexer: this }, src, tokens))) {
             src = src.substring(token.raw.length);
             tokens.push(token);
@@ -403,10 +402,7 @@ export class _Lexer {
         continue;
       }
 
-      console.log("cutted ", src);
-      console.log("=".repeat(12));
       if ((token = this.tokenizer.katex(src))) {
-        console.log("Matched KaTeX.");
         src = src.substring(token.raw.length);
         tokens.push(token);
         continue;
@@ -423,7 +419,7 @@ export class _Lexer {
       if ((token = this.tokenizer.tag(src))) {
         src = src.substring(token.raw.length);
         lastToken = tokens[tokens.length - 1];
-        if (lastToken && token.type === "text" && lastToken.type === "text") {
+        if (lastToken && token.type === 'text' && lastToken.type === 'text') {
           lastToken.raw += token.raw;
           lastToken.text += token.text;
         } else {
@@ -443,7 +439,7 @@ export class _Lexer {
       if ((token = this.tokenizer.reflink(src, this.tokens.links))) {
         src = src.substring(token.raw.length);
         lastToken = tokens[tokens.length - 1];
-        if (lastToken && token.type === "text" && lastToken.type === "text") {
+        if (lastToken && token.type === 'text' && lastToken.type === 'text') {
           lastToken.raw += token.raw;
           lastToken.text += token.text;
         } else {
@@ -495,13 +491,11 @@ export class _Lexer {
       }
 
       const katexCutter = (src: string) => {
-        const katexInlineStartRule = /(?<=\s|^)\${1,2}(?!\$)/;
-        const katexInlineRule =
-          /^(\${1,2})(?!\$)((?:\\.|[^\\\n])+?)(?<!\$)\1(?=[\s?!\.,:]|$)/;
+        const katexInlineStartRule = /\${1,2}(?!\$)/;
         const match = src.match(katexInlineStartRule);
         if (!match) return;
         const possibleKatex = src.substring(match.index as number);
-        if (possibleKatex.match(katexInlineRule)) {
+        if (possibleKatex.match(inline.katex)) {
           return match.index;
         }
       };
@@ -515,7 +509,7 @@ export class _Lexer {
         let tempStart;
         this.options.extensions.startInline.forEach((getStartIndex) => {
           tempStart = getStartIndex.call({ lexer: this }, tempSrc);
-          if (typeof tempStart === "number" && tempStart >= 0) {
+          if (typeof tempStart === 'number' && tempStart >= 0) {
             startIndex = Math.min(startIndex, tempStart);
           }
         });
@@ -524,18 +518,18 @@ export class _Lexer {
         }
       }
 
-      let res = katexCutter(src.slice(1));
+      const res = katexCutter(src.slice(1));
       if (res) cutSrc = src.substring(0, res + 1);
 
       if ((token = this.tokenizer.inlineText(cutSrc))) {
         src = src.substring(token.raw.length);
-        if (token.raw.slice(-1) !== "_") {
+        if (token.raw.slice(-1) !== '_') {
           // Track prevChar before string of ____ started
           prevChar = token.raw.slice(-1);
         }
         keepPrevChar = true;
         lastToken = tokens[tokens.length - 1];
-        if (lastToken && lastToken.type === "text") {
+        if (lastToken && lastToken.type === 'text') {
           lastToken.raw += token.raw;
           lastToken.text += token.text;
         } else {
@@ -545,7 +539,7 @@ export class _Lexer {
       }
 
       if (src) {
-        const errMsg = "Infinite loop on byte: " + src.charCodeAt(0);
+        const errMsg = 'Infinite loop on byte: ' + src.charCodeAt(0);
         if (this.options.silent) {
           console.error(errMsg);
           break;

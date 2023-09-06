@@ -1,6 +1,6 @@
 import { Button, Container, Menu, Message } from "semantic-ui-react";
 import Editor, { DiffEditor } from "@monaco-editor/react";
-import { marked } from "./lg-solution-formatter.esm";
+import { solFormatter } from "./lg-solution-formatter.esm";
 import { useState } from "react";
 
 function App() {
@@ -32,7 +32,7 @@ function App() {
             originalLanguage="markdown"
             original={origin}
             modifiedLanguage="markdown"
-            modified={marked.parse(origin)}
+            modified={solFormatter.parse(origin)}
           />
         )}
         <Button onClick={() => setSwitchMode(!switchMode)} style={{margin: "10px"}}>

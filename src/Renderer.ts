@@ -1,6 +1,6 @@
-import { _defaults } from "./defaults.ts";
-import { cleanUrl, formatString } from "./helpers.ts";
-import type { MarkedOptions } from "./MarkedOptions.ts";
+import { _defaults } from './defaults.ts';
+import { cleanUrl, formatKatex, formatString } from './helpers.ts';
+import type { MarkedOptions } from './MarkedOptions.ts';
 
 /**
  * Renderer
@@ -16,26 +16,26 @@ export class _Renderer {
     infostring: string | undefined,
     escaped?: boolean
   ): string {
-    const lang = (infostring || "").match(/^\S*/)?.[0];
+    const lang = (infostring || '').match(/^\S*/)?.[0];
 
-    code = code.replace(/\n$/, "") + "\n";
+    code = code.replace(/\n$/, '') + '\n';
 
-    return "```" + lang + "\n" + code + "```\n\n";
+    return '```' + lang + '\n' + code + '```\n\n';
   }
 
   blockquote(quote: string): string {
-    return "> " + quote.replaceAll("\n", "\n> ").slice(0, -2);
+    return '> ' + quote.replaceAll('\n', '\n> ').slice(0, -2);
   }
 
   html = (html: string, block?: boolean) => html;
 
   heading(text: string, level: number, raw: string): string {
-    return `${"#".repeat(level)} ${text}\n\n`;
+    return `${'#'.repeat(level)} ${text}\n\n`;
   }
 
-  hr = () => "---\n";
+  hr = () => '---\n';
 
-  list = (body: string): string => body + "\n";
+  list = (body: string): string => body + '\n';
 
   listitem(text: string, orderId?: number): string {
     if (orderId) {
@@ -50,7 +50,7 @@ export class _Renderer {
     if (body) body = `<tbody>${body}</tbody>`;
 
     return (
-      "<table>\n" + "<thead>\n" + header + "</thead>\n" + body + "</table>\n"
+      '<table>\n' + '<thead>\n' + header + '</thead>\n' + body + '</table>\n'
     );
   }
 
@@ -62,10 +62,10 @@ export class _Renderer {
     content: string,
     flags: {
       header: boolean;
-      align: "center" | "left" | "right" | null;
+      align: 'center' | 'left' | 'right' | null;
     }
   ): string {
-    const type = flags.header ? "th" : "td";
+    const type = flags.header ? 'th' : 'td';
     const tag = flags.align ? `<${type} align="${flags.align}">` : `<${type}>`;
     return tag + content + `</${type}>\n`;
   }
@@ -86,7 +86,7 @@ export class _Renderer {
   }
 
   br(): string {
-    return "  \n";
+    return '  \n';
   }
 
   del(text: string): string {
@@ -100,7 +100,7 @@ export class _Renderer {
     }
     href = cleanHref;
     const out = `[${formatString(text)}](${href}${
-      title ? '"' + formatString(title) + '"' : ""
+      title ? '"' + formatString(title) + '"' : ''
     })`;
     return out;
   }
@@ -116,18 +116,19 @@ export class _Renderer {
     if (title) {
       out += ` "${title}"`;
     }
-    out += ")";
+    out += ')';
     return out;
   }
 
   katex(text: string, displayMode: boolean): string {
-    const cover = displayMode ? "$$" : "$";
+    const cover = displayMode ? '$$' : '$';
     return (
-      cover +
-      (displayMode ? "\n" : " ") +
-      text.replace(/\*/g, "\\times") +
-      (displayMode ? "\n" : " ") +
       cover
+      + (displayMode ? '\n' : '')
+      + formatKatex(text).trim()
+      + (displayMode ? '\n' : '')
+      + cover
+      + (displayMode ? '\n' : '')
     );
   }
 

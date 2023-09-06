@@ -1,7 +1,7 @@
 import { _Renderer } from './Renderer.ts';
 import { _TextRenderer } from './TextRenderer.ts';
 import { _defaults } from './defaults.ts';
-import { getFullWidth, shouldAddSpaceBetweenTokens, shouldFullWidth, unescape } from './helpers.ts';
+import { unescape, trimToken } from './helpers.ts';
 import type { Token, Tokens } from './Tokens.ts';
 import type { MarkedOptions } from './MarkedOptions.ts';
 
@@ -160,7 +160,10 @@ export class _Parser {
             const item = listToken.items[j];
             let itemBody = '';
             itemBody += this.parse(item.tokens, loose).mdText;
-            body += this.renderer.listitem(itemBody, ordered ? j + 1 : undefined);
+            body += this.renderer.listitem(
+              itemBody,
+              ordered ? j + 1 : undefined
+            );
           }
 
           mdText += this.renderer.list(body);
@@ -180,7 +183,8 @@ export class _Parser {
         }
         case 'katexblock': {
           const katexToken = token as Tokens.KatexBlock;
-          mdText += this.renderer.katex(katexToken.text, katexToken.displayMode);
+          mdText
+            += this.renderer.katex(katexToken.text, katexToken.displayMode) + '\n';
           continue;
         }
         case 'text': {
@@ -213,27 +217,6 @@ export class _Parser {
     }
 
     return { mdText, displayText: '', isTrimed: false };
-  }
-
-  trimToken(
-    mdText: string,
-    displayText: string,
-    markdownText: string,
-    newDisplayText: string,
-    isTrimed: boolean
-  ) {
-    if (
-      displayText.length - 1 >= 0
-      && shouldAddSpaceBetweenTokens(
-        displayText[displayText.length - 1],
-        newDisplayText.trim()[0],
-        isTrimed || newDisplayText !== newDisplayText.trimStart()
-      )
-    ) { mdText += ' '; }
-    mdText += markdownText.trim();
-    displayText = newDisplayText.trim();
-    isTrimed = newDisplayText !== newDisplayText.trim();
-    return { mdText, isTrimed, displayText };
   }
 
   /**
@@ -295,7 +278,7 @@ export class _Parser {
         case 'escape': {
           const escapeToken = token as Tokens.Escape;
           const renderedText = renderer.text(escapeToken.text);
-          ({ mdText, displayText, isTrimed } = this.trimToken(
+          ({ mdText, displayText, isTrimed } = trimToken(
             mdText,
             displayText,
             renderedText,
@@ -317,7 +300,7 @@ export class _Parser {
             linkToken.title,
             linkChildText.mdText
           );
-          ({ mdText, displayText, isTrimed } = this.trimToken(
+          ({ mdText, displayText, isTrimed } = trimToken(
             mdText,
             displayText,
             newMdText,
@@ -339,7 +322,7 @@ export class _Parser {
           const strongToken = token as Tokens.Strong;
           const childText = this.parseInline(strongToken.tokens, renderer);
           const newMdText = renderer.strong(childText.mdText);
-          ({ mdText, displayText, isTrimed } = this.trimToken(
+          ({ mdText, displayText, isTrimed } = trimToken(
             mdText,
             displayText,
             newMdText,
@@ -352,7 +335,7 @@ export class _Parser {
           const emToken = token as Tokens.Em;
           const childText = this.parseInline(emToken.tokens, renderer);
           const newMdText = this.renderer.em(childText.mdText);
-          ({ mdText, displayText, isTrimed } = this.trimToken(
+          ({ mdText, displayText, isTrimed } = trimToken(
             mdText,
             displayText,
             newMdText,
@@ -365,7 +348,7 @@ export class _Parser {
           // enforce space
           const codespanToken = token as Tokens.Codespan;
           const newMdText = renderer.codespan(codespanToken.text);
-          ({ mdText, displayText, isTrimed } = this.trimToken(
+          ({ mdText, displayText, isTrimed } = trimToken(
             mdText,
             displayText,
             newMdText,
@@ -383,7 +366,7 @@ export class _Parser {
           const delToken = token as Tokens.Del;
           const childText = this.parseInline(delToken.tokens, renderer);
           const newMdText = renderer.del(childText.mdText);
-          ({ mdText, displayText, isTrimed } = this.trimToken(
+          ({ mdText, displayText, isTrimed } = trimToken(
             mdText,
             displayText,
             newMdText,
@@ -395,7 +378,7 @@ export class _Parser {
         case 'text': {
           const textToken = token as Tokens.Text;
           const renderedText = renderer.text(textToken.text);
-          ({ mdText, displayText, isTrimed } = this.trimToken(
+          ({ mdText, displayText, isTrimed } = trimToken(
             mdText,
             displayText,
             renderedText,
@@ -405,9 +388,12 @@ export class _Parser {
           break;
         }
         case 'katex': {
-          const textToken = token as Tokens.Katex;
-          const renderedText = textToken.raw;
-          ({ mdText, displayText, isTrimed } = this.trimToken(
+          const katexToken = token as Tokens.Katex;
+          const renderedText = renderer.katex(
+            katexToken.text,
+            katexToken.displayMode
+          );
+          ({ mdText, displayText, isTrimed } = trimToken(
             mdText,
             displayText,
             renderedText,

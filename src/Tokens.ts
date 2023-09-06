@@ -25,35 +25,35 @@ export type Token =
 
 export namespace Tokens {
   export interface Space {
-    type: "space";
+    type: 'space';
     raw: string;
   }
 
   export interface Code {
-    type: "code";
+    type: 'code';
     raw: string;
-    codeBlockStyle?: "indented" | undefined;
+    codeBlockStyle?: 'indented' | undefined;
     lang?: string | undefined;
     text: string;
     escaped?: boolean;
   }
 
   export interface Katex {
-    type: "katex";
+    type: 'katex';
     raw: string;
     text: string;
     displayMode: boolean;
   }
 
   export interface KatexBlock {
-    type: "katexblock";
+    type: 'katexblock';
     raw: string;
     text: string;
     displayMode: boolean;
   }
 
   export interface Heading {
-    type: "heading";
+    type: 'heading';
     raw: string;
     depth: number;
     text: string;
@@ -61,9 +61,9 @@ export namespace Tokens {
   }
 
   export interface Table {
-    type: "table";
+    type: 'table';
     raw: string;
-    align: Array<"center" | "left" | "right" | null>;
+    align: Array<'center' | 'left' | 'right' | null>;
     header: TableCell[];
     rows: TableCell[][];
   }
@@ -74,28 +74,28 @@ export namespace Tokens {
   }
 
   export interface Hr {
-    type: "hr";
+    type: 'hr';
     raw: string;
   }
 
   export interface Blockquote {
-    type: "blockquote";
+    type: 'blockquote';
     raw: string;
     text: string;
     tokens: Token[];
   }
 
   export interface List {
-    type: "list";
+    type: 'list';
     raw: string;
     ordered: boolean;
-    start: number | "";
+    start: number | '';
     loose: boolean;
     items: ListItem[];
   }
 
   export interface ListItem {
-    type: "list_item";
+    type: 'list_item';
     raw: string;
     task: boolean;
     checked?: boolean | undefined;
@@ -105,7 +105,7 @@ export namespace Tokens {
   }
 
   export interface Paragraph {
-    type: "paragraph";
+    type: 'paragraph';
     raw: string;
     pre?: boolean | undefined;
     text: string;
@@ -113,7 +113,7 @@ export namespace Tokens {
   }
 
   export interface HTML {
-    type: "html";
+    type: 'html';
     raw: string;
     pre: boolean;
     text: string;
@@ -121,14 +121,14 @@ export namespace Tokens {
   }
 
   export interface Text {
-    type: "text";
+    type: 'text';
     raw: string;
     text: string;
     tokens?: Token[];
   }
 
   export interface Def {
-    type: "def";
+    type: 'def';
     raw: string;
     tag: string;
     href: string;
@@ -136,13 +136,13 @@ export namespace Tokens {
   }
 
   export interface Escape {
-    type: "escape";
+    type: 'escape';
     raw: string;
     text: string;
   }
 
   export interface Tag {
-    type: "text" | "html";
+    type: 'text' | 'html';
     raw: string;
     inLink: boolean;
     inRawBlock: boolean;
@@ -151,7 +151,7 @@ export namespace Tokens {
   }
 
   export interface Link {
-    type: "link";
+    type: 'link';
     raw: string;
     href: string;
     title?: string | null;
@@ -160,7 +160,7 @@ export namespace Tokens {
   }
 
   export interface Image {
-    type: "image";
+    type: 'image';
     raw: string;
     href: string;
     title: string | null;
@@ -168,32 +168,32 @@ export namespace Tokens {
   }
 
   export interface Strong {
-    type: "strong";
+    type: 'strong';
     raw: string;
     text: string;
     tokens: Token[];
   }
 
   export interface Em {
-    type: "em";
+    type: 'em';
     raw: string;
     text: string;
     tokens: Token[];
   }
 
   export interface Codespan {
-    type: "codespan";
+    type: 'codespan';
     raw: string;
     text: string;
   }
 
   export interface Br {
-    type: "br";
+    type: 'br';
     raw: string;
   }
 
   export interface Del {
-    type: "del";
+    type: 'del';
     raw: string;
     text: string;
     tokens: Token[];
@@ -210,7 +210,7 @@ export namespace Tokens {
 
 export type Links = Record<
   string,
-  Pick<Tokens.Link | Tokens.Image, "href" | "title">
+  Pick<Tokens.Link | Tokens.Image, 'href' | 'title'>
 >;
 
 export type TokensList = Token[] & {
