@@ -4,3 +4,5 @@ node_modules/
 test/compiled_tests
 docs/LICENSE.md
 vuln.js
+*.min.js
+lib/*

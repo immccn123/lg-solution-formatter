@@ -1,7 +1,7 @@
 // https://stackoverflow.com/questions/21109011/javascript-unicode-string-chinese-character-but-no-punctuation
 // https://stackoverflow.com/questions/19899554/unicode-range-for-japanese
 const CJKRegexStr =
-  /[\x31F0-\x31FF\x3220-\x3243\x3280-\x337F]|[\u30A0-\u30FF]|[\u3041-\u3096]|[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
+  /[\u31F0-\u31FF\u3220-\u3243\u3280-\u337F]|[\u30A0-\u30FF]|[\u3041-\u3096]|[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
 const CJKPunctuation = /[，。【】「」『』❲❳［］（）《》！？“”、～；：]/;
 const nonCJKBracket = /[\(\)\[\]\{\}]/;
 const nonCJKLBracket = /[\(\[\{]/;

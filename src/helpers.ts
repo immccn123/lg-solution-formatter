@@ -174,7 +174,11 @@ export const formatString = (text: string): string => {
   }
   for (const i in fullWidthReplaceRules) {
     const rule = fullWidthReplaceRules[i];
-    if (typeof rule.target === 'string') { out = out.replace(rule.match, rule.target); } else out = out.replace(rule.match, rule.target);
+    if (typeof rule.target === 'string') {
+      out = out.replace(rule.match, rule.target);
+    } else {
+      out = out.replace(rule.match, rule.target);
+    }
   }
   return out;
 };
@@ -206,7 +210,11 @@ export const formatKatex = (text: string): string => {
   let out = text;
   for (const i in katexReplaceRules) {
     const rule = katexReplaceRules[i];
-    if (typeof rule.target === 'string') { out = out.replace(rule.match, rule.target); } else out = out.replace(rule.match, rule.target);
+    if (typeof rule.target === 'string') {
+      out = out.replace(rule.match, rule.target);
+    } else {
+      out = out.replace(rule.match, rule.target);
+    }
   }
   return out;
 };
