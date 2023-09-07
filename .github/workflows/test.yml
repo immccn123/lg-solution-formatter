@@ -16,10 +16,7 @@ jobs:
           version: 8
       - name: Install dependencies
         run: pnpm install
-      - name: Jest GitHub Action
-        uses: willcaul/jest-github-action@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          test-command: "pnpm test"
-  
+      - name: Build Modules
+        run: pnpm build
+      - name: Run Jest
+        run: pnpm test

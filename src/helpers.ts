@@ -173,6 +173,9 @@ export const formatString = (text: string): string => {
       out += getFullWidth(text[i]);
       isReplaced = true;
     }
+    if (text[i] === ' ') {
+      if (shouldRemoveSpace(out[out.length - 1], text[i + 1])) continue;
+    }
     if (i > 0 && shouldAddSpace(out[out.length - 1], text[i])) {
       out += ' ';
     }
