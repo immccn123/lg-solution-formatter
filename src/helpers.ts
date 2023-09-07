@@ -157,8 +157,17 @@ export function findClosingBracket(str: string, b: string) {
 // 先把内部的字符串格式化。
 export const formatString = (text: string): string => {
   let out = '';
+  // 先删除多余空格
   for (let i = 0; i < text.length; i++) {
-    // CJK + halfWidth
+    if (text[i] === ' ') {
+      if (shouldRemoveSpace(out[out.length - 1], text[i + 1])) continue;
+    }
+    out += text[i];
+  }
+  text = out;
+  // 然后添加缺失的空格
+  out = "";
+  for (let i = 0; i < text.length; i++) {
     let isReplaced = false;
     if (i > 0 && shouldFullWidth(text[i - 1], text[i])) {
       out += getFullWidth(text[i]);
@@ -166,9 +175,6 @@ export const formatString = (text: string): string => {
     }
     if (i > 0 && shouldAddSpace(out[out.length - 1], text[i])) {
       out += ' ';
-    }
-    if (text[i] === ' ') {
-      if (shouldRemoveSpace(out[out.length - 1], text[i + 1])) continue;
     }
     if (!isReplaced) out += text[i];
   }

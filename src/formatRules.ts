@@ -51,6 +51,8 @@ export const shouldRemoveSpace = (last?: string, next?: string) => {
   if (next && isNonCJKRBracket(next)) return true;
   // 多个空格留一个
   if (next && isSpace(next)) return true;
+  // 中文 + 英文标点
+  if (last && next && shouldFullWidth(last, next)) return true;
   // 中文和中文之间（人工强调）
   // 英文和英文之间（分词）
   // 中文和英文之间
