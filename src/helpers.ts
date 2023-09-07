@@ -203,7 +203,7 @@ export const trimToken = (
   }
   mdText += markdownText.trim();
   displayText += newDisplayText.trim();
-  isTrimed = newDisplayText !== newDisplayText.trim();
+  isTrimed = newDisplayText !== newDisplayText.trimEnd();
   return { mdText, isTrimed, displayText };
 };
 

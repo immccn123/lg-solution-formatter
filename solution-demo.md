@@ -44,3 +44,5 @@ CF1A
 标点符号后的 $\KaTeX$ be like：$\KaTeX$
 
 An English sentence with $\KaTeX$.
+
+1. 两种运算并列时，`&` 运算**优先**于 `|` 运算。
