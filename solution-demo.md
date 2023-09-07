@@ -40,3 +40,7 @@ P1001
 CF1A
 
 0x3f3f3f3f
+
+标点符号后的 $\KaTeX$ be like：$\KaTeX$
+
+An English sentence with $\KaTeX$.

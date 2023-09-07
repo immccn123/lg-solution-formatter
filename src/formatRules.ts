@@ -37,7 +37,7 @@ export const shouldAddSpaceBetweenTokens = (
   lastRemoveSpace: boolean
 ) => {
   if (isCJK(last) && isCJK(now)) return lastRemoveSpace;
-  if (!isCJK(last) && !isCJK(now)) return true && lastRemoveSpace;
+  if (!(isCJK(last) || isPunctuation(last)) && !isCJK(now)) return true && lastRemoveSpace;
   return shouldAddSpace(last, now);
 };
 

@@ -199,9 +199,10 @@ export const trimToken = (
     )
   ) {
     mdText += ' ';
+    displayText += ' ';
   }
   mdText += markdownText.trim();
-  displayText = newDisplayText.trim();
+  displayText += newDisplayText.trim();
   isTrimed = newDisplayText !== newDisplayText.trim();
   return { mdText, isTrimed, displayText };
 };
