@@ -74,8 +74,8 @@ devDependencies:
     specifier: 13.0.1
     version: 13.0.1
   marked-highlight:
-    specifier: ^2.0.4
-    version: 2.0.5(marked@8.0.0)
+    specifier: ^2.0.6
+    version: 2.0.6(marked@8.0.0)
   node-fetch:
     specifier: ^3.3.2
     version: 3.3.2
@@ -4072,10 +4072,10 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
-  /marked-highlight@2.0.5(marked@8.0.0):
-    resolution: {integrity: sha512-SnMOy3LBe3ZMVyew7sO/wqAzBBSrLrOejeayP2bmnB00rrETtNyEvJkR5f3kDRYv5nT+ueEMba6XcGlmcyaN+A==}
+  /marked-highlight@2.0.6(marked@8.0.0):
+    resolution: {integrity: sha512-xjA/C6xgXAfkkYg+YHnxdjmgFyTDtqqu8KbZiqh+COJ7PuzR15kqa+rPrs6pf/2jExXtG1jyCFUHmv9s0Bi/dQ==}
     peerDependencies:
-      marked: '>=4 <9'
+      marked: '>=4 <10'
     dependencies:
       marked: 8.0.0
     dev: true
