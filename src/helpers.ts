@@ -226,5 +226,6 @@ export const formatKatex = (text: string): string => {
       out = out.replace(rule.match, rule.target);
     }
   }
+  out = out.replace(/  /g, " ");
   return out;
 };

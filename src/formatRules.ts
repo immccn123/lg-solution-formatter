@@ -8,11 +8,11 @@ const nonCJKLBracket = /[\(\[\{]/;
 const toFullWidth = /[!\?\.,:;]/;
 
 export const CJKRgx = (regexStr: string, flags?: string): RegExp => {
-  return RegExp(regexStr.replaceAll('{CJK}', CJKRegexStr.source), flags);
+  return RegExp(regexStr.replaceAll("{CJK}", CJKRegexStr.source), flags);
 };
 
 export const isCJK = (char: string) => CJKRegexStr.test(char);
-export const isSpace = (char: string) => char === ' ';
+export const isSpace = (char: string) => char === " ";
 export const isPunctuation = (char: string) => CJKPunctuation.test(char);
 export const isNonCJKBracket = (char: string) => nonCJKBracket.test(char);
 export const isNonCJKLBracket = (char: string) => nonCJKLBracket.test(char);
@@ -37,7 +37,8 @@ export const shouldAddSpaceBetweenTokens = (
   lastRemoveSpace: boolean
 ) => {
   if (isCJK(last) && isCJK(now)) return lastRemoveSpace;
-  if (!(isCJK(last) || isPunctuation(last)) && !isCJK(now)) return true && lastRemoveSpace;
+  if (!(isCJK(last) || isPunctuation(last)) && !isCJK(now))
+    return true && lastRemoveSpace;
   return shouldAddSpace(last, now);
 };
 
@@ -67,18 +68,18 @@ export const shouldFullWidth = (last: string, now: string) => {
 export const getFullWidth = (now: string) => {
   return (() => {
     switch (now) {
-      case '.':
-        return '。';
-      case ',':
-        return '，';
-      case ':':
-        return '：';
-      case ';':
-        return '；';
-      case '!':
-        return '！';
-      case '?':
-        return '？';
+      case ".":
+        return "。";
+      case ",":
+        return "，";
+      case ":":
+        return "：";
+      case ";":
+        return "；";
+      case "!":
+        return "！";
+      case "?":
+        return "？";
       default:
         return now;
     }
@@ -91,17 +92,21 @@ export interface replaceRule {
 }
 
 export const fullWidthReplaceRules: replaceRule[] = [
-  { match: CJKRgx('(\\. )({CJK})', 'g'), target: '。$2' },
-  { match: CJKRgx('(\\? )({CJK})', 'g'), target: '？$2' },
-  { match: CJKRgx('(, )({CJK})', 'g'), target: '，$2' },
-  { match: CJKRgx('(; )({CJK})', 'g'), target: '；$2' },
-  { match: CJKRgx('(: )({CJK})', 'g'), target: '：$2' },
-  { match: CJKRgx('(! )({CJK})', 'g'), target: '！$2' }
+  { match: CJKRgx("(\\. )({CJK})", "g"), target: "。$2" },
+  { match: CJKRgx("(\\? )({CJK})", "g"), target: "？$2" },
+  { match: CJKRgx("(, )({CJK})", "g"), target: "，$2" },
+  { match: CJKRgx("(; )({CJK})", "g"), target: "；$2" },
+  { match: CJKRgx("(: )({CJK})", "g"), target: "：$2" },
+  { match: CJKRgx("(! )({CJK})", "g"), target: "！$2" },
 ];
 
 export const katexReplaceRules: replaceRule[] = [
-  { match: /( *)\*( *)/g, target: ' \\times ' },
-  { match: /( *)<=( *)/g, target: ' \\le ' },
-  { match: /( *)>=( *)/g, target: ' \\ge ' },
-  { match: / *(\d+) *\/ *(\d+) */g, target: ' \\frac{$1}{$2} ' }
+  { match: /\*/g, target: " \\times " }, // * -> 乘号
+  { match: /<=/g, target: " \\le " }, // 小于等于
+  { match: />=/g, target: " \\ge " }, // 大于等于
+  { match: /\!=/g, target: " \\neq " }, // 不等于
+  { match: /==/g, target: " = " }, // 不允许 ==
+  { match: /(\d+) *\/ *(\d+)/g, target: " \\frac{$1}{$2} " }, // 分数
+  { match: /(-+)>/g, target: " \\to " }, // ->
+  { match: /<(-+)/g, target: " \\gets " }, // <-
 ];

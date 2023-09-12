@@ -519,7 +519,7 @@ export class _Lexer {
       }
 
       const res = katexCutter(src.slice(1));
-      if (res) cutSrc = src.substring(0, res + 1);
+      if (res !== undefined) cutSrc = src.substring(0, res + 1);
 
       if ((token = this.tokenizer.inlineText(cutSrc))) {
         src = src.substring(token.raw.length);
