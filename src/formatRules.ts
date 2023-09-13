@@ -106,7 +106,20 @@ export const katexReplaceRules: replaceRule[] = [
   { match: />=/g, target: " \\ge " }, // 大于等于
   { match: /\!=/g, target: " \\neq " }, // 不等于
   { match: /==/g, target: " = " }, // 不允许 ==
-  { match: /(\d+) *\/ *(\d+)/g, target: " \\frac{$1}{$2} " }, // 分数
   { match: /(-+)>/g, target: " \\to " }, // ->
   { match: /<(-+)/g, target: " \\gets " }, // <-
+  { match: /(=+)>/g, target: " \\Rightarrow " }, // =>
+  { match: /(?<![\\{}])gcd/g, target: " \\gcd" }, // gcd -> \gcd
+  { match: /(?<![\\{}])min/g, target: " \\min" },
+  { match: /(?<![\\{}])max/g, target: " \\max" },
+  { match: /(?<![\\{}])log/g, target: " \\log" },
+  { match: /(?<!\\operatorname{)LCA(?!})/g, target: " \\operatorname{LCA}" },
+  { match: /(?<!\\operatorname{)lcm(?!})/g, target: " \\operatorname{lcm}" },
+  { match: /(?<!\\operatorname{)MEX(?!})/g, target: " \\operatorname{MEX}" },
+  {
+    match: /([a-zA-Z]+)((\[([\S\s])+?\])+)/g,
+    target: (_: string, name: string, items: string) => {
+      return name + "_{" + items.replace(/\[([\s\S]+?)\]/g, "$1,").slice(0, -1) + "}";
+    },
+  }, // dp[i][j][k] = dp[i][j][k - 1] + a[i]
 ];

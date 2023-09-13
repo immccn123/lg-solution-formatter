@@ -1,23 +1,5 @@
 const { solFormatter } = require("../lib/lg-solution-formatter.cjs");
-
-const targetRegExp = (target) => {
-  return RegExp(
-    target
-      .replaceAll("\\", "\\\\")
-      .replaceAll("$", "\\$")
-      .replaceAll(".", "\\.")
-      .replaceAll("?", "\\?")
-      .replaceAll("*", "\\*")
-      .replaceAll("+", "\\+")
-      .replaceAll("(", "\\(")
-      .replaceAll(")", "\\)")
-      .replaceAll("[", "\\[")
-      .replaceAll("]", "\\]")
-      .replaceAll("|", "\\|")
-      .replaceAll("{", "\\{")
-      .replaceAll("}", "\\}")
-  );
-};
+const { targetRegExp } = require("./testlib.js");
 
 test("[MD] em with strong and English and Chinese", () => {
   const emStrongAndEnglish = `**Bold*和斜体with English*混排的案例**`;
