@@ -1,4 +1,3 @@
-const testContents = [
-]
+const testContents = [];
 
-module.exports = {testContents};
+module.exports = { testContents };

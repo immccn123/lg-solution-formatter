@@ -18,7 +18,15 @@ function App() {
       </Menu>
       <div style={{ height: "80px" }} />
       <Container>
-        <Message warning content="尚不支持：多级列表、表格，部分语法会强制修改；"></Message>
+        <Message warning>
+          <Message.Content>
+            部分支持：多级列表
+            <br />
+            不支持：表格
+            <br />
+            部分语法存在强制修改的情况
+          </Message.Content>
+        </Message>
         {switchMode ? (
           <Editor
             height="70vh"
@@ -35,11 +43,16 @@ function App() {
             modified={solFormatter.parse(origin)}
           />
         )}
-        <Button onClick={() => setSwitchMode(!switchMode)} style={{margin: "10px"}}>
+        <Button
+          onClick={() => setSwitchMode(!switchMode)}
+          style={{ margin: "10px" }}
+        >
           {switchMode ? "Format" : "Back"}
         </Button>
         <hr></hr>
-        <a href="https://github.com/immccn123/lg-solution-formatter">开源项目 / Bug 反馈（使用 issue）</a>
+        <a href="https://github.com/immccn123/lg-solution-formatter">
+          开源项目 / Bug 反馈（使用 issue）
+        </a>
       </Container>
     </>
   );

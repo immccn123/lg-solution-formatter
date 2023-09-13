@@ -166,7 +166,7 @@ export const formatString = (text: string): string => {
   }
   text = out;
   // 然后添加缺失的空格
-  out = "";
+  out = '';
   for (let i = 0; i < text.length; i++) {
     let isReplaced = false;
     if (i > 0 && shouldFullWidth(text[i - 1], text[i])) {
@@ -226,6 +226,6 @@ export const formatKatex = (text: string): string => {
       out = out.replace(rule.match, rule.target);
     }
   }
-  out = out.replace(/  /g, " ");
+  out = out.replace(/ {2}/g, ' ');
   return out;
 };

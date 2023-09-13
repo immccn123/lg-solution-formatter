@@ -8,4 +8,9 @@ updates:
     versioning-strategy: "increase"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+  - package-ecosystem: "npm"
+    versioning-strategy: "increase"
+    directory: "/demo"
+    schedule:
+      interval: "daily"

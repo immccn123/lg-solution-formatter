@@ -27,10 +27,8 @@ test("[KaTeX] -> to \\to, <- to \\gets", () => {
 });
 
 test("[KaTeX] => to \\Rightarrow", () => {
-  const demoText =
-    "因此，${\\rm cond1} => {\\rm cond2}$。";
-  const target =
-    "因此，${\\rm cond1} \\Rightarrow {\\rm cond2}$。";
+  const demoText = "因此，${\\rm cond1} => {\\rm cond2}$。";
+  const target = "因此，${\\rm cond1} \\Rightarrow {\\rm cond2}$。";
   const res = solFormatter.parse(demoText);
   expect(res).toMatch(targetRegExp(target));
 });

@@ -1,9 +1,9 @@
-import { _Renderer } from './Renderer.ts';
-import { _TextRenderer } from './TextRenderer.ts';
-import { _defaults } from './defaults.ts';
-import { unescape, trimToken } from './helpers.ts';
-import type { Token, Tokens } from './Tokens.ts';
-import type { MarkedOptions } from './MarkedOptions.ts';
+import { _Renderer } from "./Renderer.ts";
+import { _TextRenderer } from "./TextRenderer.ts";
+import { _defaults } from "./defaults.ts";
+import { unescape, trimToken } from "./helpers.ts";
+import type { Token, Tokens } from "./Tokens.ts";
+import type { MarkedOptions } from "./MarkedOptions.ts";
 
 /**
  * Parsing & Compiling
@@ -39,8 +39,8 @@ export class _Parser {
   /**
    * Parse Loop
    */
-  parse(tokens: Token[], top = true) {
-    let mdText = '';
+  parse(tokens: Token[], level = 1) {
+    let mdText = "";
 
     // no trim.
     for (let i = 0; i < tokens.length; i++) {
@@ -48,9 +48,9 @@ export class _Parser {
 
       // Run any renderer extensions
       if (
-        this.options.extensions
-        && this.options.extensions.renderers
-        && this.options.extensions.renderers[token.type]
+        this.options.extensions &&
+        this.options.extensions.renderers &&
+        this.options.extensions.renderers[token.type]
       ) {
         const genericToken = token as Tokens.Generic;
         const ret = this.options.extensions.renderers[genericToken.type].call(
@@ -58,34 +58,34 @@ export class _Parser {
           genericToken
         );
         if (
-          ret !== false
-          || ![
-            'space',
-            'hr',
-            'heading',
-            'code',
-            'table',
-            'blockquote',
-            'list',
-            'html',
-            'paragraph',
-            'text'
+          ret !== false ||
+          ![
+            "space",
+            "hr",
+            "heading",
+            "code",
+            "table",
+            "blockquote",
+            "list",
+            "html",
+            "paragraph",
+            "text",
           ].includes(genericToken.type)
         ) {
-          mdText += ret || '';
+          mdText += ret || "";
           continue;
         }
       }
 
       switch (token.type) {
-        case 'space': {
+        case "space": {
           continue;
         }
-        case 'hr': {
+        case "hr": {
           mdText += this.renderer.hr();
           continue;
         }
-        case 'heading': {
+        case "heading": {
           const headingToken = token as Tokens.Heading;
           mdText += this.renderer.heading(
             this.parseInline(headingToken.tokens).mdText,
@@ -96,7 +96,7 @@ export class _Parser {
           );
           continue;
         }
-        case 'code': {
+        case "code": {
           const codeToken = token as Tokens.Code;
           mdText += this.renderer.code(
             codeToken.text,
@@ -105,17 +105,17 @@ export class _Parser {
           );
           continue;
         }
-        case 'table': {
+        case "table": {
           // not impl yet
 
           const tableToken = token as Tokens.Table;
           mdText += tableToken.raw;
           continue;
 
-          let header = '';
+          let header = "";
 
           // header
-          let cell = '';
+          let cell = "";
           for (let j = 0; j < tableToken.header.length; j++) {
             cell += this.renderer.tablecell(
               this.parseInline(tableToken.header[j].tokens).mdText,
@@ -124,17 +124,17 @@ export class _Parser {
           }
           header += this.renderer.tablerow(cell);
 
-          let body = '';
+          let body = "";
           for (let j = 0; j < tableToken.rows.length; j++) {
             const row = tableToken.rows[j];
 
-            cell = '';
+            cell = "";
             for (let k = 0; k < row.length; k++) {
               cell += this.renderer.tablecell(
                 this.parseInline(row[k].tokens).mdText,
                 {
                   header: false,
-                  align: tableToken.align[k]
+                  align: tableToken.align[k],
                 }
               );
             }
@@ -144,63 +144,67 @@ export class _Parser {
           mdText += this.renderer.table(header, body);
           continue;
         }
-        case 'blockquote': {
+        case "blockquote": {
           const blockquoteToken = token as Tokens.Blockquote;
           const body = this.parse(blockquoteToken.tokens);
           mdText += this.renderer.blockquote(body.mdText);
           continue;
         }
-        case 'list': {
+        case "list": {
           const listToken = token as Tokens.List;
           const ordered = listToken.ordered;
           const loose = listToken.loose;
 
-          let body = '';
+          let body = "";
           for (let j = 0; j < listToken.items.length; j++) {
             const item = listToken.items[j];
-            let itemBody = '';
-            itemBody += this.parse(item.tokens, loose).mdText;
+            const itemBody = this.parse(item.tokens, level + 1).mdText;
             body += this.renderer.listitem(
               itemBody,
               ordered ? j + 1 : undefined
             );
           }
 
-          mdText += this.renderer.list(body);
+          let rendered = this.renderer.list(body);
+          if (level > 1) {
+            let spaces = (ordered ? "   " : "  ").repeat(level - 1);
+            rendered = "\n" + spaces + rendered.replace(/\n/g, "\n" + spaces);
+          }
+          mdText += rendered;
           continue;
         }
-        case 'html': {
+        case "html": {
           const htmlToken = token as Tokens.HTML;
           mdText += this.renderer.html(htmlToken.text, htmlToken.block);
           continue;
         }
-        case 'paragraph': {
+        case "paragraph": {
           const paragraphToken = token as Tokens.Paragraph;
           mdText += this.renderer.paragraph(
             this.parseInline(paragraphToken.tokens).mdText
           );
           continue;
         }
-        case 'katexblock': {
+        case "katexblock": {
           const katexToken = token as Tokens.KatexBlock;
-          mdText
-            += this.renderer.katex(katexToken.text, katexToken.displayMode) + '\n';
+          mdText +=
+            this.renderer.katex(katexToken.text, katexToken.displayMode) + "\n";
           continue;
         }
-        case 'text': {
+        case "text": {
           let textToken = token as Tokens.Text;
           let body = textToken.tokens
             ? this.parseInline(textToken.tokens).mdText
             : textToken.text;
-          while (i + 1 < tokens.length && tokens[i + 1].type === 'text') {
+          while (i + 1 < tokens.length && tokens[i + 1].type === "text") {
             textToken = tokens[++i] as Tokens.Text;
-            body
-              += '\n'
-              + (textToken.tokens
+            body +=
+              "\n" +
+              (textToken.tokens
                 ? this.parseInline(textToken.tokens)
                 : textToken.text);
           }
-          mdText += top ? this.renderer.paragraph(body) : body;
+          mdText += level === 1 ? this.renderer.paragraph(body) : body;
           continue;
         }
 
@@ -208,7 +212,7 @@ export class _Parser {
           const errMsg = 'Token with "' + token.type + '" type was not found.';
           if (this.options.silent) {
             console.error(errMsg);
-            return { mdText: '', displayText: '', isTrimed: false };
+            return { mdText: "", displayText: "", isTrimed: false };
           } else {
             throw new Error(errMsg);
           }
@@ -216,7 +220,7 @@ export class _Parser {
       }
     }
 
-    return { mdText, displayText: '', isTrimed: false };
+    return { mdText, displayText: "", isTrimed: false };
   }
 
   /**
@@ -224,39 +228,39 @@ export class _Parser {
    */
   parseInline(tokens: Token[], renderer?: _Renderer | _TextRenderer) {
     renderer = renderer || this.renderer;
-    let mdText = '';
+    let mdText = "";
     let isTrimed: boolean = false;
-    let displayText: string = '';
+    let displayText: string = "";
 
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
 
       // Run any renderer extensions
       if (
-        this.options.extensions
-        && this.options.extensions.renderers
-        && this.options.extensions.renderers[token.type]
+        this.options.extensions &&
+        this.options.extensions.renderers &&
+        this.options.extensions.renderers[token.type]
       ) {
         const ret = this.options.extensions.renderers[token.type].call(
           { parser: this },
           token
         );
         if (
-          ret !== false
-          || ![
-            'escape',
-            'html',
-            'link',
-            'image',
-            'strong',
-            'em',
-            'codespan',
-            'br',
-            'del',
-            'text'
+          ret !== false ||
+          ![
+            "escape",
+            "html",
+            "link",
+            "image",
+            "strong",
+            "em",
+            "codespan",
+            "br",
+            "del",
+            "text",
           ].includes(token.type)
         ) {
-          mdText += ret || '';
+          mdText += ret || "";
           continue;
         }
       }
@@ -275,7 +279,7 @@ export class _Parser {
        */
 
       switch (token.type) {
-        case 'escape': {
+        case "escape": {
           const escapeToken = token as Tokens.Escape;
           const renderedText = renderer.text(escapeToken.text);
           ({ mdText, displayText, isTrimed } = trimToken(
@@ -287,12 +291,12 @@ export class _Parser {
           ));
           break;
         }
-        case 'html': {
+        case "html": {
           const tagToken = token as Tokens.Tag;
           mdText += renderer.html(tagToken.text);
           break;
         }
-        case 'link': {
+        case "link": {
           const linkToken = token as Tokens.Link;
           const linkChildText = this.parseInline(linkToken.tokens, renderer);
           const newMdText = renderer.link(
@@ -309,7 +313,7 @@ export class _Parser {
           ));
           break;
         }
-        case 'image': {
+        case "image": {
           const imageToken = token as Tokens.Image;
           mdText += renderer.image(
             imageToken.href,
@@ -318,7 +322,7 @@ export class _Parser {
           );
           break;
         }
-        case 'strong': {
+        case "strong": {
           const strongToken = token as Tokens.Strong;
           const childText = this.parseInline(strongToken.tokens, renderer);
           const newMdText = renderer.strong(childText.mdText);
@@ -331,7 +335,7 @@ export class _Parser {
           ));
           break;
         }
-        case 'em': {
+        case "em": {
           const emToken = token as Tokens.Em;
           const childText = this.parseInline(emToken.tokens, renderer);
           const newMdText = this.renderer.em(childText.mdText);
@@ -344,7 +348,7 @@ export class _Parser {
           ));
           break;
         }
-        case 'codespan': {
+        case "codespan": {
           // enforce space
           const codespanToken = token as Tokens.Codespan;
           const newMdText = renderer.codespan(codespanToken.text);
@@ -357,12 +361,12 @@ export class _Parser {
           ));
           break;
         }
-        case 'br': {
+        case "br": {
           // no effect in inline mode
           mdText += renderer.br();
           break;
         }
-        case 'del': {
+        case "del": {
           const delToken = token as Tokens.Del;
           const childText = this.parseInline(delToken.tokens, renderer);
           const newMdText = renderer.del(childText.mdText);
@@ -375,7 +379,7 @@ export class _Parser {
           ));
           break;
         }
-        case 'text': {
+        case "text": {
           const textToken = token as Tokens.Text;
           const renderedText = renderer.text(textToken.text);
           ({ mdText, displayText, isTrimed } = trimToken(
@@ -387,7 +391,7 @@ export class _Parser {
           ));
           break;
         }
-        case 'katex': {
+        case "katex": {
           const katexToken = token as Tokens.Katex;
           const renderedText = renderer.katex(
             katexToken.text,
@@ -406,7 +410,7 @@ export class _Parser {
           const errMsg = 'Token with "' + token.type + '" type was not found.';
           if (this.options.silent) {
             console.error(errMsg);
-            return { mdText: '', displayText: '', isTrimed: false };
+            return { mdText: "", displayText: "", isTrimed: false };
           } else {
             throw new Error(errMsg);
           }
@@ -416,7 +420,7 @@ export class _Parser {
     return {
       mdText,
       displayText: displayText.trim(),
-      isTrimed: displayText !== displayText.trim()
+      isTrimed: displayText !== displayText.trim(),
     };
   }
 }

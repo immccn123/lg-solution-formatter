@@ -2,7 +2,7 @@ const { solFormatter } = require("../lib/lg-solution-formatter.cjs");
 const { targetRegExp } = require("./testlib.js");
 
 test("[MD] em with strong and English and Chinese", () => {
-  const emStrongAndEnglish = `**Bold*和斜体with English*混排的案例**`;
+  const emStrongAndEnglish = "**Bold*和斜体with English*混排的案例**";
   const res = solFormatter.parse(emStrongAndEnglish);
   expect(res).toMatch(/\*\*Bold \*和斜体 with English\* 混排的案例\*\*\S*/);
 });
@@ -151,6 +151,20 @@ test("[MD] <issue #12> KaTeX lexing #2", () => {
   // The copyright of the text belongs to the Computer Federation of China.
   const demoText = String.raw`$4 \ x_1 \ x_2 \ x_3$：新建一个编号为 $x_3$ 的序列，其为 $x_1$ 号序列后顺次添加 $x_2$ 号序列中数字得到的结果，然后删除 $x_1, x_2$ 对应的序列。此时序列 $x_3$ 视为存在，而序列 $x_1, x_2$ 被视为不存在，在后续操作中也不会被再次使用。保证 $1 \le x_1, x_2, x_3 \le n + q$、$x_1 \ne x_2$、序列 $x_1, x_2$ 在操作前存在、且在操作前没有序列使用过编号 $x_3$。`;
   const target = String.raw`$4 \ x_1 \ x_2 \ x_3$：新建一个编号为 $x_3$ 的序列，其为 $x_1$ 号序列后顺次添加 $x_2$ 号序列中数字得到的结果，然后删除 $x_1, x_2$ 对应的序列。此时序列 $x_3$ 视为存在，而序列 $x_1, x_2$ 被视为不存在，在后续操作中也不会被再次使用。保证 $1 \le x_1, x_2, x_3 \le n + q$、$x_1 \ne x_2$、序列 $x_1, x_2$ 在操作前存在、且在操作前没有序列使用过编号 $x_3$。`;
+  const res = solFormatter.parse(demoText);
+  expect(res).toMatch(targetRegExp(target));
+});
+
+test("[MD] multi-level unordered list (partially)", () => {
+  const demoText = "- QwQ\n  - quq可爱捏";
+  const target = "- QwQ\n  - quq 可爱捏";
+  const res = solFormatter.parse(demoText);
+  expect(res).toMatch(targetRegExp(target));
+});
+
+test("[MD] multi-level ordered list (partially)", () => {
+  const demoText = "1. QwQ\n   1. quq可爱捏";
+  const target = "1. QwQ\n   1. quq 可爱捏";
   const res = solFormatter.parse(demoText);
   expect(res).toMatch(targetRegExp(target));
 });

@@ -8,11 +8,11 @@ const nonCJKLBracket = /[\(\[\{]/;
 const toFullWidth = /[!\?\.,:;]/;
 
 export const CJKRgx = (regexStr: string, flags?: string): RegExp => {
-  return RegExp(regexStr.replaceAll("{CJK}", CJKRegexStr.source), flags);
+  return RegExp(regexStr.replaceAll('{CJK}', CJKRegexStr.source), flags);
 };
 
 export const isCJK = (char: string) => CJKRegexStr.test(char);
-export const isSpace = (char: string) => char === " ";
+export const isSpace = (char: string) => char === ' ';
 export const isPunctuation = (char: string) => CJKPunctuation.test(char);
 export const isNonCJKBracket = (char: string) => nonCJKBracket.test(char);
 export const isNonCJKLBracket = (char: string) => nonCJKLBracket.test(char);
@@ -37,8 +37,7 @@ export const shouldAddSpaceBetweenTokens = (
   lastRemoveSpace: boolean
 ) => {
   if (isCJK(last) && isCJK(now)) return lastRemoveSpace;
-  if (!(isCJK(last) || isPunctuation(last)) && !isCJK(now))
-    return true && lastRemoveSpace;
+  if (!(isCJK(last) || isPunctuation(last)) && !isCJK(now)) { return true && lastRemoveSpace; }
   return shouldAddSpace(last, now);
 };
 
@@ -68,18 +67,18 @@ export const shouldFullWidth = (last: string, now: string) => {
 export const getFullWidth = (now: string) => {
   return (() => {
     switch (now) {
-      case ".":
-        return "。";
-      case ",":
-        return "，";
-      case ":":
-        return "：";
-      case ";":
-        return "；";
-      case "!":
-        return "！";
-      case "?":
-        return "？";
+      case '.':
+        return '。';
+      case ',':
+        return '，';
+      case ':':
+        return '：';
+      case ';':
+        return '；';
+      case '!':
+        return '！';
+      case '?':
+        return '？';
       default:
         return now;
     }
@@ -92,34 +91,36 @@ export interface replaceRule {
 }
 
 export const fullWidthReplaceRules: replaceRule[] = [
-  { match: CJKRgx("(\\. )({CJK})", "g"), target: "。$2" },
-  { match: CJKRgx("(\\? )({CJK})", "g"), target: "？$2" },
-  { match: CJKRgx("(, )({CJK})", "g"), target: "，$2" },
-  { match: CJKRgx("(; )({CJK})", "g"), target: "；$2" },
-  { match: CJKRgx("(: )({CJK})", "g"), target: "：$2" },
-  { match: CJKRgx("(! )({CJK})", "g"), target: "！$2" },
+  { match: CJKRgx('(\\. )({CJK})', 'g'), target: '。$2' },
+  { match: CJKRgx('(\\? )({CJK})', 'g'), target: '？$2' },
+  { match: CJKRgx('(, )({CJK})', 'g'), target: '，$2' },
+  { match: CJKRgx('(; )({CJK})', 'g'), target: '；$2' },
+  { match: CJKRgx('(: )({CJK})', 'g'), target: '：$2' },
+  { match: CJKRgx('(! )({CJK})', 'g'), target: '！$2' }
 ];
 
 export const katexReplaceRules: replaceRule[] = [
-  { match: /\*/g, target: " \\times " }, // * -> 乘号
-  { match: /<=/g, target: " \\le " }, // 小于等于
-  { match: />=/g, target: " \\ge " }, // 大于等于
-  { match: /\!=/g, target: " \\neq " }, // 不等于
-  { match: /==/g, target: " = " }, // 不允许 ==
-  { match: /(-+)>/g, target: " \\to " }, // ->
-  { match: /<(-+)/g, target: " \\gets " }, // <-
-  { match: /(=+)>/g, target: " \\Rightarrow " }, // =>
-  { match: /(?<![\\{}])gcd/g, target: " \\gcd" }, // gcd -> \gcd
-  { match: /(?<![\\{}])min/g, target: " \\min" },
-  { match: /(?<![\\{}])max/g, target: " \\max" },
-  { match: /(?<![\\{}])log/g, target: " \\log" },
-  { match: /(?<!\\operatorname{)LCA(?!})/g, target: " \\operatorname{LCA}" },
-  { match: /(?<!\\operatorname{)lcm(?!})/g, target: " \\operatorname{lcm}" },
-  { match: /(?<!\\operatorname{)MEX(?!})/g, target: " \\operatorname{MEX}" },
+  { match: /\*/g, target: ' \\times ' }, // * -> 乘号
+  { match: /<=/g, target: ' \\le ' }, // 小于等于
+  { match: />=/g, target: ' \\ge ' }, // 大于等于
+  { match: /\!=/g, target: ' \\neq ' }, // 不等于
+  { match: /==/g, target: ' = ' }, // 不允许 ==
+  { match: /(-+)>/g, target: ' \\to ' }, // ->
+  { match: /<(-+)/g, target: ' \\gets ' }, // <-
+  { match: /(=+)>/g, target: ' \\Rightarrow ' }, // =>
+  { match: /(?<![\\{}])gcd/g, target: ' \\gcd' }, // gcd -> \gcd
+  { match: /(?<![\\{}])min/g, target: ' \\min' },
+  { match: /(?<![\\{}])max/g, target: ' \\max' },
+  { match: /(?<![\\{}])log/g, target: ' \\log' },
+  { match: /(?<!\\operatorname{)LCA(?!})/g, target: ' \\operatorname{LCA}' },
+  { match: /(?<!\\operatorname{)lcm(?!})/g, target: ' \\operatorname{lcm}' },
+  { match: /(?<!\\operatorname{)MEX(?!})/g, target: ' \\operatorname{MEX}' },
   {
     match: /([a-zA-Z]+)((\[([\S\s])+?\])+)/g,
     target: (_: string, name: string, items: string) => {
-      return name + "_{" + items.replace(/\[([\s\S]+?)\]/g, "$1,").slice(0, -1) + "}";
-    },
-  }, // dp[i][j][k] = dp[i][j][k - 1] + a[i]
+      return (
+        name + '_{' + items.replace(/\[([\s\S]+?)\]/g, '$1,').slice(0, -1) + '}'
+      );
+    }
+  } // dp[i][j][k] = dp[i][j][k - 1] + a[i]
 ];
