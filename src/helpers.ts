@@ -190,6 +190,15 @@ export const formatString = (text: string): string => {
       out = out.replace(rule.match, rule.target);
     }
   }
+  text = out;
+  // 最后再删一次空格
+  out = "";
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === " ") {
+      if (shouldRemoveSpace(out[out.length - 1], text[i + 1])) continue;
+    }
+    out += text[i];
+  }
   return out;
 };
 
