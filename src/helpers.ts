@@ -1,13 +1,14 @@
 import {
+  forbidKatexRules,
   fullWidthReplaceRules,
   getFullWidth,
   katexReplaceRules,
   shouldAddSpace,
   shouldAddSpaceBetweenTokens,
   shouldFullWidth,
-  shouldRemoveSpace
-} from './formatRules.ts';
-import type { Rule } from './matchRules.ts';
+  shouldRemoveSpace,
+} from "./formatRules.ts";
+import type { Rule } from "./matchRules.ts";
 
 /**
  * Helpers
@@ -19,38 +20,38 @@ export function unescape(html: string) {
   // explicitly match decimal, hex, and named HTML entities
   return html.replace(unescapeTest, (_, n) => {
     n = n.toLowerCase();
-    if (n === 'colon') return ':';
-    if (n.charAt(0) === '#') {
-      return n.charAt(1) === 'x'
+    if (n === "colon") return ":";
+    if (n.charAt(0) === "#") {
+      return n.charAt(1) === "x"
         ? String.fromCharCode(parseInt(n.substring(2), 16))
         : String.fromCharCode(+n.substring(1));
     }
-    return '';
+    return "";
   });
 }
 
 const caret = /(^|[^\[])\^/g;
 
 export function edit(regex: Rule, opt?: string) {
-  regex = typeof regex === 'string' ? regex : regex.source;
-  opt = opt || '';
+  regex = typeof regex === "string" ? regex : regex.source;
+  opt = opt || "";
   const obj = {
     replace: (name: string | RegExp, val: string | RegExp) => {
-      val = typeof val === 'object' && 'source' in val ? val.source : val;
-      val = val.replace(caret, '$1');
+      val = typeof val === "object" && "source" in val ? val.source : val;
+      val = val.replace(caret, "$1");
       regex = (regex as string).replace(name, val);
       return obj;
     },
     getRegex: () => {
       return new RegExp(regex, opt);
-    }
+    },
   };
   return obj;
 }
 
 export function cleanUrl(href: string) {
   try {
-    href = encodeURI(href).replace(/%25/g, '%');
+    href = encodeURI(href).replace(/%25/g, "%");
   } catch (e) {
     return null;
   }
@@ -65,14 +66,14 @@ export function splitCells(tableRow: string, count?: number) {
   const row = tableRow.replace(/\|/g, (match, offset, str) => {
       let escaped = false;
       let curr = offset;
-      while (--curr >= 0 && str[curr] === '\\') escaped = !escaped;
+      while (--curr >= 0 && str[curr] === "\\") escaped = !escaped;
       if (escaped) {
         // odd number of slashes means | is escaped
         // so we leave it alone
-        return '|';
+        return "|";
       } else {
         // add space before unescaped |
-        return ' |';
+        return " |";
       }
     }),
     cells = row.split(/ \|/);
@@ -90,13 +91,13 @@ export function splitCells(tableRow: string, count?: number) {
     if (cells.length > count) {
       cells.splice(count);
     } else {
-      while (cells.length < count) cells.push('');
+      while (cells.length < count) cells.push("");
     }
   }
 
   for (; i < cells.length; i++) {
     // leading or trailing whitespace is ignored per the gfm spec
-    cells[i] = cells[i].trim().replace(/\\\|/g, '|');
+    cells[i] = cells[i].trim().replace(/\\\|/g, "|");
   }
   return cells;
 }
@@ -112,7 +113,7 @@ export function splitCells(tableRow: string, count?: number) {
 export function rtrim(str: string, c: string, invert?: boolean) {
   const l = str.length;
   if (l === 0) {
-    return '';
+    return "";
   }
 
   // Length of suffix matching the invert condition.
@@ -140,7 +141,7 @@ export function findClosingBracket(str: string, b: string) {
 
   let level = 0;
   for (let i = 0; i < str.length; i++) {
-    if (str[i] === '\\') {
+    if (str[i] === "\\") {
       i++;
     } else if (str[i] === b[0]) {
       level++;
@@ -156,34 +157,34 @@ export function findClosingBracket(str: string, b: string) {
 
 // 先把内部的字符串格式化。
 export const formatString = (text: string): string => {
-  let out = '';
+  let out = "";
   // 先删除多余空格
   for (let i = 0; i < text.length; i++) {
-    if (text[i] === ' ') {
+    if (text[i] === " ") {
       if (shouldRemoveSpace(out[out.length - 1], text[i + 1])) continue;
     }
     out += text[i];
   }
   text = out;
   // 然后添加缺失的空格
-  out = '';
+  out = "";
   for (let i = 0; i < text.length; i++) {
     let isReplaced = false;
     if (i > 0 && shouldFullWidth(text[i - 1], text[i])) {
       out += getFullWidth(text[i]);
       isReplaced = true;
     }
-    if (text[i] === ' ') {
+    if (text[i] === " ") {
       if (shouldRemoveSpace(out[out.length - 1], text[i + 1])) continue;
     }
     if (i > 0 && shouldAddSpace(out[out.length - 1], text[i])) {
-      out += ' ';
+      out += " ";
     }
     if (!isReplaced) out += text[i];
   }
   for (const i in fullWidthReplaceRules) {
     const rule = fullWidthReplaceRules[i];
-    if (typeof rule.target === 'string') {
+    if (typeof rule.target === "string") {
       out = out.replace(rule.match, rule.target);
     } else {
       out = out.replace(rule.match, rule.target);
@@ -200,15 +201,15 @@ export const trimToken = (
   isTrimed: boolean
 ) => {
   if (
-    displayText.length - 1 >= 0
-    && shouldAddSpaceBetweenTokens(
+    displayText.length - 1 >= 0 &&
+    shouldAddSpaceBetweenTokens(
       displayText[displayText.length - 1],
       newDisplayText.trim()[0],
       isTrimed || newDisplayText !== newDisplayText.trimStart()
     )
   ) {
-    mdText += ' ';
-    displayText += ' ';
+    mdText += " ";
+    displayText += " ";
   }
   mdText += markdownText.trim();
   displayText += newDisplayText.trim();
@@ -217,15 +218,25 @@ export const trimToken = (
 };
 
 export const formatKatex = (text: string): string => {
+  text = text.trim();
   let out = text;
-  for (const i in katexReplaceRules) {
-    const rule = katexReplaceRules[i];
-    if (typeof rule.target === 'string') {
+  katexReplaceRules.forEach((rule) => {
+    if (typeof rule.target === "string") {
       out = out.replace(rule.match, rule.target);
     } else {
       out = out.replace(rule.match, rule.target);
     }
-  }
-  out = out.replace(/ {2}/g, ' ');
+  });
+  out = out.replace(/ +/g, " ");
+  return out;
+};
+
+export const shouldForbidKatex = (katex: string): boolean => {
+  let out = false;
+  forbidKatexRules.forEach((rule) => {
+    if (rule.shouldForbid(katex)) {
+      out ||= true;
+    }
+  });
   return out;
 };

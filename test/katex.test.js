@@ -42,21 +42,21 @@ test("[KaTeX] != to \\neq", () => {
 
 test("[KaTeX] gcd to \\gcd", () => {
   const demoText = "$gcd(a,b) = 1$，$\\gcd(x, y) = 2$";
-  const target = "$\\gcd(a,b) = 1$，$\\gcd(x, y) = 2$";
+  const target = "$\\gcd (a,b) = 1$，$\\gcd(x, y) = 2$";
   const res = solFormatter.parse(demoText);
   expect(res).toMatch(targetRegExp(target));
 });
 
 test("[KaTeX] min to \\min", () => {
   const demoText = "$min(a,b) = 1$，$\\min(x, y) = 2$";
-  const target = "$\\min(a,b) = 1$，$\\min(x, y) = 2$";
+  const target = "$\\min (a,b) = 1$，$\\min(x, y) = 2$";
   const res = solFormatter.parse(demoText);
   expect(res).toMatch(targetRegExp(target));
 });
 
 test("[KaTeX] max to \\max", () => {
   const demoText = "$max(a,b) = 1$，$\\max(x, y) = 2$";
-  const target = "$\\max(a,b) = 1$，$\\max(x, y) = 2$";
+  const target = "$\\max (a,b) = 1$，$\\max(x, y) = 2$";
   const res = solFormatter.parse(demoText);
   expect(res).toMatch(targetRegExp(target));
 });
@@ -99,6 +99,13 @@ test("[KaTeX] X percent (50\\%) should not be formatted", () => {
 test("[KaTeX] array with [index] to _{index}", () => {
   const demoText = "$dp[i][j][k] = dp[i][j][k - 1] + a[i]$";
   const target = "$dp_{i,j,k} = dp_{i,j,k - 1} + a_{i}$";
+  const res = solFormatter.parse(demoText);
+  expect(res).toMatch(targetRegExp(target));
+});
+
+test("[KaTeX] forbid KaTeX by keyword", () => {
+  const demoText = "使用$dfs$解决。";
+  const target = "使用 dfs 解决。";
   const res = solFormatter.parse(demoText);
   expect(res).toMatch(targetRegExp(target));
 });

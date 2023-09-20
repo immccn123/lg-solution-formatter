@@ -1,5 +1,5 @@
 import { _defaults } from './defaults.ts';
-import { cleanUrl, formatKatex, formatString } from './helpers.ts';
+import { cleanUrl, formatKatex, formatString, shouldForbidKatex } from './helpers.ts';
 import type { MarkedOptions } from './MarkedOptions.ts';
 
 /**
@@ -121,6 +121,8 @@ export class _Renderer {
   }
 
   katex(text: string, displayMode: boolean): string {
+    // Match Keyword
+    if (shouldForbidKatex(text)) return text.trim();
     const cover = displayMode ? '$$' : '$';
     return (
       cover
