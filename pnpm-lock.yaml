@@ -23,8 +23,8 @@ devDependencies:
     specifier: ^10.0.1
     version: 10.0.1(semantic-release@22.0.5)
   '@semantic-release/github':
-    specifier: ^9.1.0
-    version: 9.1.0(semantic-release@22.0.5)
+    specifier: ^9.2.0
+    version: 9.2.0(semantic-release@22.0.5)
   '@semantic-release/release-notes-generator':
     specifier: ^12.0.0
     version: 12.0.0(semantic-release@22.0.5)
@@ -75,7 +75,7 @@ devDependencies:
     version: 13.0.1
   marked-highlight:
     specifier: ^2.0.6
-    version: 2.0.6(marked@8.0.0)
+    version: 2.0.6(marked@9.0.3)
   node-fetch:
     specifier: ^3.3.2
     version: 3.3.2
@@ -1032,8 +1032,8 @@ packages:
       - supports-color
     dev: true
 
-  /@semantic-release/github@9.1.0(semantic-release@22.0.5):
-    resolution: {integrity: sha512-RKhS43OpNnQr9rA9Z72EbG8wM/UmWoCpop2z6G++ulRu7t8MuYS2v6TR2SoOFhcDPa2wY91v5VPouCWtDjz4+Q==}
+  /@semantic-release/github@9.2.0(semantic-release@22.0.5):
+    resolution: {integrity: sha512-Opbivp9zA2VY63OdMZEBH5vs5VawuncQZO1VW6Lffo0e/jlDi165Wi4BKN1j1Z22goqk4scBFoEjvvXoveg/Iw==}
     engines: {node: '>=18'}
     peerDependencies:
       semantic-release: '>=20.1.0'
@@ -4039,12 +4039,12 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
-  /marked-highlight@2.0.6(marked@8.0.0):
+  /marked-highlight@2.0.6(marked@9.0.3):
     resolution: {integrity: sha512-xjA/C6xgXAfkkYg+YHnxdjmgFyTDtqqu8KbZiqh+COJ7PuzR15kqa+rPrs6pf/2jExXtG1jyCFUHmv9s0Bi/dQ==}
     peerDependencies:
       marked: '>=4 <10'
     dependencies:
-      marked: 8.0.0
+      marked: 9.0.3
     dev: true
 
   /marked-terminal@6.0.0(marked@9.0.3):
@@ -4060,12 +4060,6 @@ packages:
       marked: 9.0.3
       node-emoji: 2.1.0
       supports-hyperlinks: 3.0.0
-    dev: true
-
-  /marked@8.0.0:
-    resolution: {integrity: sha512-RI/D5csFVreNrFchdKFSdV38GDHJdD7OdmbNWYzGvApPb0A9pyypgfHC/FBH4ugmRE8cr7yg/TH7tu8585eMhA==}
-    engines: {node: '>= 16'}
-    hasBin: true
     dev: true
 
   /marked@9.0.3:
@@ -4848,7 +4842,7 @@ packages:
     dependencies:
       '@semantic-release/commit-analyzer': 11.0.0(semantic-release@22.0.5)
       '@semantic-release/error': 4.0.0
-      '@semantic-release/github': 9.1.0(semantic-release@22.0.5)
+      '@semantic-release/github': 9.2.0(semantic-release@22.0.5)
       '@semantic-release/npm': 11.0.0(semantic-release@22.0.5)
       '@semantic-release/release-notes-generator': 12.0.0(semantic-release@22.0.5)
       aggregate-error: 5.0.0
