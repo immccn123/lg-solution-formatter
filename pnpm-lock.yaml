@@ -71,11 +71,11 @@ devDependencies:
     specifier: ^29.7.0
     version: 29.7.0(@types/node@20.5.9)(ts-node@10.9.1)
   markdown-it:
-    specifier: 13.0.1
-    version: 13.0.1
+    specifier: 13.0.2
+    version: 13.0.2
   marked-highlight:
     specifier: ^2.0.6
-    version: 2.0.6(marked@8.0.0)
+    version: 2.0.6(marked@9.0.3)
   node-fetch:
     specifier: ^3.3.2
     version: 3.3.2
@@ -4028,8 +4028,8 @@ packages:
       tmpl: 1.0.5
     dev: true
 
-  /markdown-it@13.0.1:
-    resolution: {integrity: sha512-lTlxriVoy2criHP0JKRhO2VDG9c2ypWCsT237eDiLqi09rmbKoUetyGHq2uOIRoRS//kfoJckS0eUzzkDR+k2Q==}
+  /markdown-it@13.0.2:
+    resolution: {integrity: sha512-FtwnEuuK+2yVU7goGn/MJ0WBZMM9ZPgU9spqlFs7/A/pDIUNSOQZhUgOqYCficIuR2QaFnrt8LHqBWsbTAoI5w==}
     hasBin: true
     dependencies:
       argparse: 2.0.1
@@ -4039,12 +4039,12 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
-  /marked-highlight@2.0.6(marked@8.0.0):
+  /marked-highlight@2.0.6(marked@9.0.3):
     resolution: {integrity: sha512-xjA/C6xgXAfkkYg+YHnxdjmgFyTDtqqu8KbZiqh+COJ7PuzR15kqa+rPrs6pf/2jExXtG1jyCFUHmv9s0Bi/dQ==}
     peerDependencies:
       marked: '>=4 <10'
     dependencies:
-      marked: 8.0.0
+      marked: 9.0.3
     dev: true
 
   /marked-terminal@6.0.0(marked@9.0.3):
@@ -4060,12 +4060,6 @@ packages:
       marked: 9.0.3
       node-emoji: 2.1.0
       supports-hyperlinks: 3.0.0
-    dev: true
-
-  /marked@8.0.0:
-    resolution: {integrity: sha512-RI/D5csFVreNrFchdKFSdV38GDHJdD7OdmbNWYzGvApPb0A9pyypgfHC/FBH4ugmRE8cr7yg/TH7tu8585eMhA==}
-    engines: {node: '>= 16'}
-    hasBin: true
     dev: true
 
   /marked@9.0.3:
