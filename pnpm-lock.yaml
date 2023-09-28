@@ -15,7 +15,7 @@ devDependencies:
     version: 4.0.2
   '@rollup/plugin-typescript':
     specifier: ^11.1.4
-    version: 11.1.4(rollup@3.29.3)(tslib@2.6.2)(typescript@5.2.2)
+    version: 11.1.4(rollup@3.29.4)(tslib@2.6.2)(typescript@5.2.2)
   '@semantic-release/commit-analyzer':
     specifier: ^11.0.0
     version: 11.0.0(semantic-release@22.0.5)
@@ -75,7 +75,7 @@ devDependencies:
     version: 13.0.1
   marked-highlight:
     specifier: ^2.0.6
-    version: 2.0.6(marked@8.0.0)
+    version: 2.0.6(marked@9.0.3)
   node-fetch:
     specifier: ^3.3.2
     version: 3.3.2
@@ -83,8 +83,8 @@ devDependencies:
     specifier: ^4.4.5
     version: 4.4.5
   rollup:
-    specifier: ^3.29.3
-    version: 3.29.3
+    specifier: ^3.29.4
+    version: 3.29.4
   semantic-release:
     specifier: ^22.0.5
     version: 22.0.5(typescript@5.2.2)
@@ -950,7 +950,7 @@ packages:
       config-chain: 1.1.13
     dev: true
 
-  /@rollup/plugin-typescript@11.1.4(rollup@3.29.3)(tslib@2.6.2)(typescript@5.2.2):
+  /@rollup/plugin-typescript@11.1.4(rollup@3.29.4)(tslib@2.6.2)(typescript@5.2.2):
     resolution: {integrity: sha512-WZRh5LBVLQXdKFICUId5J3eIpmjGURaBqntfg3GSZACgeOAFS+lOSMGTwfzDkELTaZVp/lWdMVNU3UkwCUBg/Q==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -963,14 +963,14 @@ packages:
       tslib:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.4(rollup@3.29.3)
+      '@rollup/pluginutils': 5.0.4(rollup@3.29.4)
       resolve: 1.22.4
-      rollup: 3.29.3
+      rollup: 3.29.4
       tslib: 2.6.2
       typescript: 5.2.2
     dev: true
 
-  /@rollup/pluginutils@5.0.4(rollup@3.29.3):
+  /@rollup/pluginutils@5.0.4(rollup@3.29.4):
     resolution: {integrity: sha512-0KJnIoRI8A+a1dqOYLxH8vBf8bphDmty5QvIm2hqm7oFCFYKCAZWWd2hXgMibaPsNDhI0AtpYfQZJG47pt/k4g==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -982,7 +982,7 @@ packages:
       '@types/estree': 1.0.1
       estree-walker: 2.0.2
       picomatch: 2.3.1
-      rollup: 3.29.3
+      rollup: 3.29.4
     dev: true
 
   /@semantic-release/commit-analyzer@11.0.0(semantic-release@22.0.5):
@@ -4039,12 +4039,12 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
-  /marked-highlight@2.0.6(marked@8.0.0):
+  /marked-highlight@2.0.6(marked@9.0.3):
     resolution: {integrity: sha512-xjA/C6xgXAfkkYg+YHnxdjmgFyTDtqqu8KbZiqh+COJ7PuzR15kqa+rPrs6pf/2jExXtG1jyCFUHmv9s0Bi/dQ==}
     peerDependencies:
       marked: '>=4 <10'
     dependencies:
-      marked: 8.0.0
+      marked: 9.0.3
     dev: true
 
   /marked-terminal@6.0.0(marked@9.0.3):
@@ -4060,12 +4060,6 @@ packages:
       marked: 9.0.3
       node-emoji: 2.1.0
       supports-hyperlinks: 3.0.0
-    dev: true
-
-  /marked@8.0.0:
-    resolution: {integrity: sha512-RI/D5csFVreNrFchdKFSdV38GDHJdD7OdmbNWYzGvApPb0A9pyypgfHC/FBH4ugmRE8cr7yg/TH7tu8585eMhA==}
-    engines: {node: '>= 16'}
-    hasBin: true
     dev: true
 
   /marked@9.0.3:
@@ -4805,8 +4799,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rollup@3.29.3:
-    resolution: {integrity: sha512-T7du6Hum8jOkSWetjRgbwpM6Sy0nECYrYRSmZjayFcOddtKJWU4d17AC3HNUk7HRuqy4p+G7aEZclSHytqUmEg==}
+  /rollup@3.29.4:
+    resolution: {integrity: sha512-oWzmBZwvYrU0iJHtDmhsm662rC15FRXmcjCk1xD771dFDx5jJ02ufAQQTn0etB2emNk4J9EZg/yWKpsn9BWGRw==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
