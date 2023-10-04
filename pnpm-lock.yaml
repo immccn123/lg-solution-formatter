@@ -71,8 +71,8 @@ devDependencies:
     specifier: ^29.7.0
     version: 29.7.0(@types/node@20.5.9)(ts-node@10.9.1)
   markdown-it:
-    specifier: 13.0.1
-    version: 13.0.1
+    specifier: 13.0.2
+    version: 13.0.2
   marked-highlight:
     specifier: ^2.0.6
     version: 2.0.6(marked@9.0.3)
@@ -4070,8 +4070,8 @@ packages:
       tmpl: 1.0.5
     dev: true
 
-  /markdown-it@13.0.1:
-    resolution: {integrity: sha512-lTlxriVoy2criHP0JKRhO2VDG9c2ypWCsT237eDiLqi09rmbKoUetyGHq2uOIRoRS//kfoJckS0eUzzkDR+k2Q==}
+  /markdown-it@13.0.2:
+    resolution: {integrity: sha512-FtwnEuuK+2yVU7goGn/MJ0WBZMM9ZPgU9spqlFs7/A/pDIUNSOQZhUgOqYCficIuR2QaFnrt8LHqBWsbTAoI5w==}
     hasBin: true
     dependencies:
       argparse: 2.0.1
