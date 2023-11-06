@@ -42,7 +42,7 @@
   "devDependencies": {
     "@markedjs/html-differ": "^4.0.2",
     "@rollup/plugin-typescript": "^11.1.5",
-    "@semantic-release/commit-analyzer": "^11.0.0",
+    "@semantic-release/commit-analyzer": "^11.1.0",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^9.2.1",
     "@semantic-release/release-notes-generator": "^12.1.0",
