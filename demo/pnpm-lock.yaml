@@ -12,8 +12,8 @@ dependencies:
     specifier: ^5.17.0
     version: 5.17.0
   '@testing-library/react':
-    specifier: ^14.1.0
-    version: 14.1.0(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^14.1.1
+    version: 14.1.1(react-dom@18.2.0)(react@18.2.0)
   '@testing-library/user-event':
     specifier: ^14.5.1
     version: 14.5.1(@testing-library/dom@9.3.1)
@@ -2392,8 +2392,8 @@ packages:
       redent: 3.0.0
     dev: false
 
-  /@testing-library/react@14.1.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-hcvfZEEyO0xQoZeHmUbuMs7APJCGELpilL7bY+BaJaMP57aWc6q1etFwScnoZDheYjk4ESdlzPdQ33IbsKAK/A==}
+  /@testing-library/react@14.1.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-XN9qioSzyYvfH+O09pzc9HAhZ2dSuTZLh+EmHkp1OKKxe13wAf617EKLuQ5l5S5dlfgPf/p0MHTeRkqO8Xz8qw==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.0.0
