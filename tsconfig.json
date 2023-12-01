@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "module": "NodeNext",
-    "isolatedModules": true,
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "exactOptionalPropertyTypes": true,
+    "lib": ["es2022", "ESNext"],
+    "module": "Node16",
+    "skipLibCheck": true,
     "strict": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "NodeNext",
-    "allowImportingTsExtensions": true,
-    "sourceMap": false
+    "target": "ESNext"
   },
-  "include": [
-    "src/*.ts"
-, "src/__test__/formatter.test.ts"  ]
+  "exclude": ["coverage/", "node_modules/", "**/example.js"],
+  "include": ["**/*.js", "lib/index.d.ts"]
 }

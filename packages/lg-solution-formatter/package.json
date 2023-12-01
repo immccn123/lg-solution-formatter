@@ -1,0 +1,24 @@
+{
+  "name": "lg-solution-formatter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Imken Luo <me@imken.moe>",
+  "license": "MIT",
+  "dependencies": {
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.4"
+  },
+  "type": "module",
+  "exports": {
+    "default": [
+      "./index.js"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "solfmt-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@coreui/coreui": "^4.3.2",
+    "@coreui/vue": "^4.10.1",
+    "@guolao/vue-monaco-editor": "^1.4.0",
+    "bootstrap": "^5.3.2",
+    "monaco-themes": "^0.4.4",
+    "vue": "^3.3.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.0",
+    "chalk": "^5.3.0",
+    "lightningcss": "^1.22.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vue-tsc": "^1.8.22"
+  }
+}

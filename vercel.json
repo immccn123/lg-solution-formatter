@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd packages/solfmt-web && pnpm build",
+  "outputDirectory": "packages/solfmt-web/dist",
+  "installCommand": "pnpm install"
+}
