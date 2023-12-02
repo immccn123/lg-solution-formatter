@@ -3,17 +3,19 @@ import remarkParse from "remark-parse";
 import remarkMath from "remark-math";
 import remarkStringify from "remark-stringify";
 import remarkLfmFmt from "../remark-lfm-fmt/index.js";
+import remarkGfm from "remark-gfm";
 
 const solFmtUnified = unified()
   .use(remarkParse)
   .use(remarkMath, { singleDollarTextMath: true })
+  .use(remarkGfm)
   .use(remarkLfmFmt)
-  .use(remarkStringify, { bullet: "-" });
+  .use(remarkStringify, { bullet: "-", rule: "-" });
 
 /**
  * @param {string} sourceStr
  */
-const solutionFormat = async (sourceStr) => {
+const formatSolution = async (sourceStr) => {
   const file = await solFmtUnified.process(sourceStr);
   return String(file);
 };
@@ -21,10 +23,10 @@ const solutionFormat = async (sourceStr) => {
 /**
  * @param {string} sourceStr
  */
-const solutionFormatSync = (sourceStr) => {
+const formatSolutionSync = (sourceStr) => {
   const file = solFmtUnified.processSync(sourceStr);
   return String(file);
 };
 
-export default solutionFormat;
-export { solutionFormatSync, solutionFormat };
+export default formatSolution;
+export { formatSolutionSync, formatSolution };

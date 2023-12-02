@@ -10,6 +10,7 @@
   "author": "Imken Luo <me@imken.moe>",
   "license": "MIT",
   "dependencies": {
+    "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
