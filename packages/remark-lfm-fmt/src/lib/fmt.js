@@ -5,12 +5,13 @@
 
 /// <reference types="mdast-util-math" />
 
-import { formatMath, formatText } from "./helper.js";
+import { concatToken, formatMath, formatText } from "./helper.js";
+import { shouldAddSpace } from "./rule.js";
 
 export default function remarkLfmFmt() {
   /** @param {RootContent} node */
   function findFirstDescendant(node) {
-    if ("children" in node && node.children.length > 0) {
+    if ("children" in node) {
       return findFirstDescendant(node.children[0]);
     }
 
@@ -19,7 +20,7 @@ export default function remarkLfmFmt() {
 
   /** @param {RootContent} node */
   function findLastDescendant(node) {
-    if ("children" in node && node.children.length > 0) {
+    if ("children" in node) {
       return findLastDescendant(node.children[node.children.length - 1]);
     }
 
@@ -51,9 +52,61 @@ export default function remarkLfmFmt() {
       case "paragraph":
       case "strong":
       case "tableCell": {
+        let lastAddSpace = false;
+
         for (let i = 0; i < node.children.length; i++) {
           format(node.children[i]);
-          // concat token
+
+          if (i == 0) continue;
+
+          const lastNode = findLastDescendant(node.children[i - 1]);
+          const thisNode = findFirstDescendant(node.children[i]);
+          switch (lastNode.type) {
+            case "text": {
+              if (thisNode.type === "text") {
+                const { left, right, addSpace, addSpaceNext } = concatToken(
+                  lastNode.value,
+                  thisNode.value,
+                  lastAddSpace
+                );
+                lastNode.value = left;
+                thisNode.value = right;
+                lastAddSpace = addSpaceNext;
+                if (addSpace) {
+                  // @ts-ignore
+                  node.children = [
+                    ...node.children.slice(0, i),
+                    { type: "text", value: " " },
+                    ...node.children.slice(i),
+                  ];
+                  i++;
+                }
+              } else if (thisNode.type === "inlineMath" || thisNode.type === "inlineCode") {
+                const lastStr = thisNode.value.trimEnd();
+                if (shouldAddSpace(lastStr[lastStr.length - 1], "A")) {
+                  lastNode.value = lastStr + " ";
+                } else {
+                  thisNode.value = lastStr;
+                }
+              }
+              break;
+            }
+            case "inlineMath":
+            case "inlineCode": {
+              if (thisNode.type === "text") {
+                if (shouldAddSpace("A", thisNode.value.trimStart()[0])) {
+                  thisNode.value = " " + thisNode.value.trimStart();
+                } else {
+                  thisNode.value = thisNode.value.trimStart();
+                }
+              }
+              break;
+            }
+
+            default:
+              lastAddSpace = false;
+              break;
+          }
         }
         break;
       }

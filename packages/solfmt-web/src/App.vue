@@ -4,7 +4,7 @@ import MonacoEditor, {
   VueMonacoDiffEditor,
 } from "@guolao/vue-monaco-editor";
 import GitHubTheme from "monaco-themes/themes/GitHub Light.json";
-import { solutionFormatSync } from "../../lg-solution-formatter/index.js";
+import { formatSolutionSync } from "../../lg-solution-formatter/index.js";
 
 import { CButton, CButtonGroup } from "@coreui/vue";
 import { ref } from "vue";
@@ -21,7 +21,7 @@ const loadTheme = () => {
 };
 
 const formatRaw = () => {
-  code.value = solutionFormatSync(code.value);
+  code.value = formatSolutionSync(code.value);
   showDone.value = true;
   setTimeout(() => (showDone.value = false), 1000);
 };
@@ -37,22 +37,41 @@ const MODE = import.meta.env.MODE;
     </h1>
   </div>
   <div>
-    <MonacoEditor
-      height="73vh"
-      language="markdown"
-      theme="github"
-      v-model:value="code"
-      v-on:before-mount="loadTheme()"
-      v-if="!showFormatted"
-    />
-    <VueMonacoDiffEditor
-      height="73vh"
-      language="markdown"
-      theme="github"
-      :original="code"
-      :modified="solutionFormatSync(code)"
-      v-else
-    />
+    <div v-if="!showFormatted">
+      <div>
+        <h3 style="text-align: center">Source</h3>
+      </div>
+      <MonacoEditor
+        height="73vh"
+        language="markdown"
+        theme="github"
+        v-model:value="code"
+        v-on:before-mount="loadTheme()"
+        :options="{ renderWhitespace: 'all' }"
+      />
+    </div>
+    <div v-else>
+      <div>
+        <h3 style="display: inline-block; width: 50%; text-align: center">
+          Before
+        </h3>
+        <h3 style="display: inline-block; width: 50%; text-align: center">
+          After
+        </h3>
+      </div>
+      <VueMonacoDiffEditor
+        height="73vh"
+        language="markdown"
+        theme="github"
+        :original="code"
+        :modified="formatSolutionSync(code)"
+        :options="{
+          readOnly: true,
+          readOnlyMessage: { value: '这里不可以，呃，编辑' },
+          renderWhitespace: 'all',
+        }"
+      />
+    </div>
   </div>
   <div style="padding: 10px">
     <CButtonGroup role="group" size="sm">
@@ -60,19 +79,18 @@ const MODE = import.meta.env.MODE;
         color="primary"
         v-on:click="() => (showFormatted = !showFormatted)"
         variant="outline"
-        :disabled="showDone"
       >
         {{ showFormatted ? "返回" : "格式化并展示差异" }}
       </CButton>
       <CButton
         color="secondary"
-        v-on:click="formatRaw"
-        :disabled="showDone"
+        v-on:click="formatRaw()"
         variant="outline"
         v-if="!showFormatted"
       >
-        {{ showDone ? "完成！" : "仅格式化" }}
+        仅格式化
       </CButton>
+      <CButton disabled v-if="showDone" variant="ghost" color="info">完成！</CButton>
     </CButtonGroup>
     <details>
       <summary>⚠️注意事项</summary>
@@ -90,9 +108,8 @@ const MODE = import.meta.env.MODE;
     </details>
   </div>
   <p style="text-align: center; font-size: small">
-    此版本仍在开发，部分表现与基于 marked.js (改)
-    的旧版本不同。（现在效果跟只加了个 remark-pangu 差不多啦，还没有写复杂的
-    Token 拼接）<br />
+    此版本仍在开发，部分表现与基于 marked.js (改) 的旧版本不同。对 Markdown
+    语法容错性较差，准备编写较为宽松的语法解析器。<br />
     本项目在 MIT 许可证下授权。
     <a href="https://github.com/immccn123/lg-solution-formatter">GitHub</a>
     <br />
