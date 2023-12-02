@@ -61,53 +61,60 @@ export default function remarkLfmFmt() {
 
           const lastNode = findLastDescendant(node.children[i - 1]);
           const thisNode = findFirstDescendant(node.children[i]);
-          switch (lastNode.type) {
-            case "text": {
-              if (thisNode.type === "text") {
-                const { left, right, addSpace, addSpaceNext } = concatToken(
-                  lastNode.value,
-                  thisNode.value,
-                  lastAddSpace
-                );
-                lastNode.value = left;
-                thisNode.value = right;
-                lastAddSpace = addSpaceNext;
-                if (addSpace) {
-                  // @ts-ignore
-                  node.children = [
-                    ...node.children.slice(0, i),
-                    { type: "text", value: " " },
-                    ...node.children.slice(i),
-                  ];
-                  i++;
-                }
-              } else if (thisNode.type === "inlineMath" || thisNode.type === "inlineCode") {
-                const lastStr = thisNode.value.trimEnd();
-                if (shouldAddSpace(lastStr[lastStr.length - 1], "A")) {
-                  lastNode.value = lastStr + " ";
-                } else {
-                  thisNode.value = lastStr;
-                }
-              }
-              break;
-            }
-            case "inlineMath":
-            case "inlineCode": {
-              if (thisNode.type === "text") {
-                if (shouldAddSpace("A", thisNode.value.trimStart()[0])) {
-                  thisNode.value = " " + thisNode.value.trimStart();
-                } else {
-                  thisNode.value = thisNode.value.trimStart();
-                }
-              }
-              break;
-            }
 
-            default:
-              lastAddSpace = false;
-              break;
+          if (lastNode.type === "text") {
+            if (thisNode.type === "text") {
+              const { left, right, addSpace, addSpaceNext } = concatToken(
+                lastNode.value,
+                thisNode.value,
+                lastAddSpace
+              );
+              lastNode.value = left;
+              thisNode.value = right;
+              lastAddSpace = addSpaceNext;
+              if (addSpace) {
+                // @ts-expect-error 我也不知道这里的类型推断是怎么样的 总之很阴间就是了！又不是不能用
+                node.children = [
+                  ...node.children.slice(0, i),
+                  { type: "text", value: " " },
+                  ...node.children.slice(i),
+                ];
+                i++;
+              }
+            } else if (
+              thisNode.type === "inlineMath" ||
+              thisNode.type === "inlineCode"
+            ) {
+              const lastStr = lastNode.value.trimEnd();
+              if (
+                shouldAddSpace(
+                  lastStr[lastStr.length - 1],
+                  "A",
+                  lastStr !== lastNode.value
+                )
+              ) {
+                lastNode.value = lastStr + " ";
+              } else {
+                lastNode.value = lastStr;
+              }
+            }
+          } else if (
+            lastNode.type === "inlineMath" ||
+            lastNode.type === "inlineCode"
+          ) {
+            if (thisNode.type === "text") {
+              const thisStr = thisNode.value.trimStart();
+              if (shouldAddSpace("A", thisStr[0], thisStr !== thisNode.value)) {
+                thisNode.value = " " + thisStr;
+              } else {
+                thisNode.value = thisStr;
+              }
+            }
+          } else {
+            lastAddSpace = false;
           }
         }
+
         break;
       }
 

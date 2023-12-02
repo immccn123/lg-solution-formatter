@@ -64,19 +64,18 @@ export const concatToken = (left, right, addExtraSpace = false) => {
   const tLeft = left.trimEnd(),
     tRight = right.trimStart();
 
-  const leftLast = tLeft[tLeft.length - 1],
-    rightFirst = tRight[0];
+  const leftEnd = tLeft[tLeft.length - 1],
+    rightBegin = tRight[0];
 
   const isLeftTrimed = tLeft !== left,
     isRightTrimed = tRight !== right,
     isTrimed = isLeftTrimed || isRightTrimed;
 
-  if (isCJKPunctuation(leftLast) || isCJKPunctuation(rightFirst))
+  if (isCJKPunctuation(leftEnd) || isCJKPunctuation(rightBegin))
     return { left: tLeft, right: tRight, addSpace: false, addSpaceNext: false };
 
   // **好的**, 但是
-  // 中文**, 但是**
-  if (isCJK(leftLast) && TO_HALF_WIDTH_BEGIN.test(tRight))
+  if (isCJK(leftEnd) && TO_HALF_WIDTH_BEGIN.test(tRight))
     return {
       left: tLeft,
       right: tRight.replace(TO_HALF_WIDTH_BEGIN, (match) =>
@@ -86,18 +85,18 @@ export const concatToken = (left, right, addExtraSpace = false) => {
       addSpaceNext: false,
     };
 
-  if (isCJK(leftLast) && isCJK(rightFirst))
+  if (isCJK(leftEnd) && isCJK(rightBegin))
     return {
       left: tLeft,
       right: tRight,
-      addSpace: addExtraSpace,
+      addSpace: isTrimed || addExtraSpace,
       addSpaceNext: addExtraSpace ? false : isTrimed,
     };
 
-  if (isCJK(leftLast) !== isCJK(rightFirst))
+  if (isCJK(leftEnd) !== isCJK(rightBegin))
     return { left: tLeft, right: tRight, addSpace: true, addSpaceNext: false };
 
-  if (!isCJK(leftLast) && !isCJK(rightFirst))
+  if (!isCJK(leftEnd) && !isCJK(rightBegin))
     return {
       left: tLeft,
       right: tRight,

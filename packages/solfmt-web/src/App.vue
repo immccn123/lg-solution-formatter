@@ -26,6 +26,11 @@ const formatRaw = () => {
   setTimeout(() => (showDone.value = false), 1000);
 };
 
+const formatAndCopy = () => {
+  formatRaw();
+  window.navigator.clipboard.writeText(code.value);
+}
+
 const COMMIT_HASH: string = import.meta.env.VITE_COMMIT_HASH;
 const MODE = import.meta.env.MODE;
 </script>
@@ -41,14 +46,8 @@ const MODE = import.meta.env.MODE;
       <div>
         <h3 style="text-align: center">Source</h3>
       </div>
-      <MonacoEditor
-        height="73vh"
-        language="markdown"
-        theme="github"
-        v-model:value="code"
-        v-on:before-mount="loadTheme()"
-        :options="{ renderWhitespace: 'all' }"
-      />
+      <MonacoEditor height="73vh" language="markdown" theme="github" v-model:value="code" v-on:before-mount="loadTheme()"
+        :options="{ renderWhitespace: 'all' }" />
     </div>
     <div v-else>
       <div>
@@ -59,35 +58,23 @@ const MODE = import.meta.env.MODE;
           After
         </h3>
       </div>
-      <VueMonacoDiffEditor
-        height="73vh"
-        language="markdown"
-        theme="github"
-        :original="code"
-        :modified="formatSolutionSync(code)"
-        :options="{
+      <VueMonacoDiffEditor height="73vh" language="markdown" theme="github" :original="code"
+        :modified="formatSolutionSync(code)" :options="{
           readOnly: true,
           readOnlyMessage: { value: '这里不可以，呃，编辑' },
           renderWhitespace: 'all',
-        }"
-      />
+        }" />
     </div>
   </div>
   <div style="padding: 10px">
     <CButtonGroup role="group" size="sm">
-      <CButton
-        color="primary"
-        v-on:click="() => (showFormatted = !showFormatted)"
-        variant="outline"
-      >
+      <CButton color="primary" v-on:click="() => (showFormatted = !showFormatted)" variant="outline">
         {{ showFormatted ? "返回" : "格式化并展示差异" }}
       </CButton>
-      <CButton
-        color="secondary"
-        v-on:click="formatRaw()"
-        variant="outline"
-        v-if="!showFormatted"
-      >
+      <CButton color="secondary" v-on:click="formatAndCopy()" variant="outline" v-if="!showFormatted">
+        格式化并复制
+      </CButton>
+      <CButton color="secondary" v-on:click="formatRaw()" variant="outline" v-if="!showFormatted">
         仅格式化
       </CButton>
       <CButton disabled v-if="showDone" variant="ghost" color="info">完成！</CButton>

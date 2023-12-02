@@ -69,7 +69,7 @@
 ---
 
 - 原神impact! 启动！原神impact,  启动！
-- 原神 impact！启动！原神 impact，启动！
+- 原神 impact! 启动！原神 impact, 启动！
 
 ---
 
