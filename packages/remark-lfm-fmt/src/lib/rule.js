@@ -99,4 +99,10 @@ export const shouldAddSpace = (left, right, addExtraSpace = false) => {
  */
 export const toFullWidthExtraRules = [
   { pattern: CJKRgx(`({CJK}) *\\:`, "g"), replace: toFullWidth("$1：") },
+  {
+    pattern: CJKRgx(`({CJK}) +(${CJK_PUNCTUATION.source})`, "g"),
+    replace: (_, CJKChr, punt) => {
+      return `${CJKChr}${toFullWidth(punt)}`;
+    },
+  },
 ];
