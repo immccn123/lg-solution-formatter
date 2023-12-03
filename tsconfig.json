@@ -4,12 +4,17 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "exactOptionalPropertyTypes": true,
-    "lib": ["es2022", "ESNext"],
-    "module": "Node16",
+    "lib": ["ES2020", "ESNext"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "skipLibCheck": true,
     "strict": true,
-    "target": "ESNext"
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2020",
+    "paths": {
+      "@lfmfmt/*": ["packages/*"]
+    },
+    "baseUrl": "./"
   },
-  "exclude": ["coverage/", "node_modules/", "**/example.js"],
-  "include": ["**/*.js", "lib/index.d.ts"]
+  "exclude": ["coverage/", "node_modules/", "**/example.js"]
 }

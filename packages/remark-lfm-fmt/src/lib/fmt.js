@@ -1,6 +1,7 @@
 /**
  * @typedef {import('mdast').Root} Root
  * @typedef {import('mdast').RootContent} RootContent
+ * @typedef {import('vfile').VFile} VFile
  */
 
 /// <reference types="mdast-util-math" />
@@ -150,10 +151,12 @@ export default function remarkLfmFmt() {
    *
    * @param {Root} tree
    *   Tree.
+   * @param {VFile} file
+   *   VFile.
    * @returns
    *   Nothing.
    */
-  return (tree) => {
+  return (tree, file) => {
     tree.children.forEach((node) => format(node));
   };
 }

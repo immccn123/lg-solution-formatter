@@ -3,26 +3,28 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    "default": "./index.js",
+    "types": "./index.d.ts"
   },
   "keywords": [],
   "author": "Imken Luo <me@imken.moe>",
   "license": "MIT",
-  "type": "module",
   "dependencies": {
     "pangu": "^4.0.7",
     "unist-util-visit": "^5.0.0"
-  },
-  "exports": {
-    "default": "./index.js",
-    "development": "./src/index.js"
   },
   "devDependencies": {
     "@types/mdast": "^4.0.3",
     "@types/node": "^20.10.1",
     "@types/pangu": "^4.0.2",
     "mdast-util-math": "^3.0.0",
-    "remark": "^15.0.1"
+    "remark": "^15.0.1",
+    "vfile": "^6.0.1"
   }
 }

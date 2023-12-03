@@ -2,7 +2,7 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkMath from "remark-math";
 import remarkStringify from "remark-stringify";
-import remarkLfmFmt from "../remark-lfm-fmt/index.js";
+import remarkLfmFmt from "@lfmfmt/remark-lfm-fmt/index.js";
 import remarkGfm from "remark-gfm";
 
 const solFmtUnified = unified()

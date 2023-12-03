@@ -1,9 +1,4 @@
 {
-  "compilerOptions": {
-    "skipLibCheck": true,
-    "target": "ESNext",
-    "lib": ["es2022", "ESNext"],
-    "declaration": true
-  },
-  "include": ["*.d.ts", "index.js"]
+  "extends": "../../tsconfig.json",
+  "include": ["index.js"],
 }

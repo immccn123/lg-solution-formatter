@@ -4,7 +4,7 @@ import MonacoEditor, {
   VueMonacoDiffEditor,
 } from "@guolao/vue-monaco-editor";
 import GitHubTheme from "monaco-themes/themes/GitHub Light.json";
-import { formatSolutionSync } from "../../lg-solution-formatter/index.js";
+import { formatSolutionSync } from "@lfmfmt/lg-solution-formatter";
 
 import { CButton, CButtonGroup } from "@coreui/vue";
 import { ref } from "vue";
@@ -47,7 +47,7 @@ const MODE = import.meta.env.MODE;
         <h3 style="text-align: center">Source</h3>
       </div>
       <MonacoEditor height="73vh" language="markdown" theme="github" v-model:value="code" v-on:before-mount="loadTheme()"
-        :options="{ renderWhitespace: 'all' }" />
+        :options="{ renderWhitespace: 'all', wordWrap: 'on' }" />
     </div>
     <div v-else>
       <div>
@@ -63,6 +63,7 @@ const MODE = import.meta.env.MODE;
           readOnly: true,
           readOnlyMessage: { value: '这里不可以，呃，编辑' },
           renderWhitespace: 'all',
+          wordWrap: 'on',
         }" />
     </div>
   </div>

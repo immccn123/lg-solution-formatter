@@ -48,6 +48,9 @@ importers:
       remark:
         specifier: ^15.0.1
         version: 15.0.1
+      vfile:
+        specifier: ^6.0.1
+        version: 6.0.1
 
   packages/solfmt-web:
     dependencies:
