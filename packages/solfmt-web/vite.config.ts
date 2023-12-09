@@ -17,7 +17,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@lfmfmt": path.resolve(__dirname, "../"),
+      "@imkdown": path.resolve(__dirname, "../"),
     },
   },
 });

@@ -1,12 +1,18 @@
-import { unified } from "unified";
-import remarkParse from "remark-parse";
+/**
+ * @imkdown/lg-solution-formatter
+ * ---
+ * @author Imken Luo <me@imken.moe> (https://imken.moe)
+ * @license MIT
+ * @homepage https://github.com/immccn123/lg-solution-formatter
+ */
+
+import { remark } from "remark";
 import remarkMath from "remark-math";
 import remarkStringify from "remark-stringify";
-import remarkLfmFmt from "@lfmfmt/remark-lfm-fmt/index.js";
+import remarkLfmFmt from "@imkdown/remark-lfm-fmt";
 import remarkGfm from "remark-gfm";
 
-const solFmtUnified = unified()
-  .use(remarkParse)
+const solFmtRemark = remark()
   .use(remarkMath, { singleDollarTextMath: true })
   .use(remarkGfm)
   .use(remarkLfmFmt)
@@ -16,7 +22,7 @@ const solFmtUnified = unified()
  * @param {string} sourceStr
  */
 const formatSolution = async (sourceStr) => {
-  const file = await solFmtUnified.process(sourceStr);
+  const file = await solFmtRemark.process(sourceStr);
   return String(file);
 };
 
@@ -24,7 +30,7 @@ const formatSolution = async (sourceStr) => {
  * @param {string} sourceStr
  */
 const formatSolutionSync = (sourceStr) => {
-  const file = solFmtUnified.processSync(sourceStr);
+  const file = solFmtRemark.processSync(sourceStr);
   return String(file);
 };
 

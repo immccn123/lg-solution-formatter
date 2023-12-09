@@ -1,24 +1,30 @@
 {
-  "name": "lg-solution-formatter",
+  "name": "@imkdown/lg-solution-formatter",
   "version": "1.0.0",
-  "description": "",
+  "description": "A JavaScript library for formatting Markdown to meet \"Solution Standard of Luogu Main Problem Set\" (洛谷主题库题解规范)",
   "main": "index.js",
   "types": "index.d.ts",
   "type": "module",
+  "private": false,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node scripts/build.mjs",
+    "prepack": "pnpm build"
   },
   "keywords": [],
   "author": "Imken Luo <me@imken.moe>",
   "license": "MIT",
   "dependencies": {
+    "@imkdown/remark-lfm-fmt": "workspace:^",
+    "remark": "^15.0.1",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
-    "remark-parse": "^11.0.0",
-    "remark-stringify": "^11.0.0",
-    "unified": "^11.0.4"
+    "remark-stringify": "^11.0.0"
   },
   "exports": {
     "default": "./index.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.8"
   }
 }

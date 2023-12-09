@@ -101,8 +101,12 @@ export const toFullWidthExtraRules = [
   { pattern: CJKRgx(`({CJK}) *\\:`, "g"), replace: toFullWidth("$1：") },
   {
     pattern: CJKRgx(`({CJK}) +(${CJK_PUNCTUATION.source})`, "g"),
-    replace: (_, CJKChr, punt) => {
-      return `${CJKChr}${toFullWidth(punt)}`;
+    replace: (_, char, punt) => {
+      return `${char}${toFullWidth(punt)}`;
     },
+  },
+  {
+    pattern: /\.{3,}/g,
+    replace: (match) => "…".repeat(Math.min(Math.ceil(match.length / 3), 2)),
   },
 ];

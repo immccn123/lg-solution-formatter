@@ -5,14 +5,14 @@
     "emitDeclarationOnly": true,
     "exactOptionalPropertyTypes": true,
     "lib": ["ES2020", "ESNext"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ES2015",
+    "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2020",
     "paths": {
-      "@lfmfmt/*": ["packages/*"]
+      "@imkdown/*": ["packages/*"]
     },
     "baseUrl": "./"
   },

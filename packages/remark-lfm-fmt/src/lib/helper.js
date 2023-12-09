@@ -11,26 +11,13 @@ import {
 /** @param {string} str */
 export const removeDuplSpaces = (str) => str.replace(/ +/g, " ");
 
-/** @param {string} str */
-export const replaceThreeDots = (str) =>
-  str.replace(/\.{3,}/g, (match) =>
-    "…".repeat(Math.min(Math.ceil(match.length / 3), 2))
-  );
-
 /** @param {string} text */
 export const formatText = (text) => {
-  let res = text.trim();
-
-  res = replaceThreeDots(res);
-  res = removeDuplSpaces(res);
-  res = pangu.spacing(res);
+  let res = pangu.spacing(removeDuplSpaces(text.trim()));
 
   toFullWidthExtraRules.forEach((rule) => {
-    if (typeof rule.replace === "string") {
-      res = res.replace(rule.pattern, rule.replace);
-    } else {
-      res = res.replace(rule.pattern, rule.replace);
-    }
+    // @ts-ignore 有点搞不明白为什么这里必须针对 typeof rule.replace === "string" 条件分开写一样的东西
+    res = res.replace(rule.pattern, rule.replace);
   });
 
   if (text.startsWith(" ")) res = " " + res;
@@ -42,14 +29,12 @@ export const formatText = (text) => {
 /** @param {string} tex */
 export const formatMath = (tex) => {
   let res = tex.trim();
+
   mathReplaceRules.forEach((rule) => {
-    // 为什么必须要用这么阴间的写法
-    if (typeof rule.replace === "string") {
-      res = res.replace(rule.pattern, rule.replace);
-    } else {
-      res = res.replace(rule.pattern, rule.replace);
-    }
+    // @ts-ignore 同上
+    res = res.replace(rule.pattern, rule.replace);
   });
+
   res = removeDuplSpaces(res).trim();
   return res;
 };

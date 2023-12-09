@@ -4,7 +4,7 @@ import MonacoEditor, {
   VueMonacoDiffEditor,
 } from "@guolao/vue-monaco-editor";
 import GitHubTheme from "monaco-themes/themes/GitHub Light.json";
-import { formatSolutionSync } from "@lfmfmt/lg-solution-formatter";
+import { formatSolutionSync } from "@imkdown/lg-solution-formatter";
 
 import { CButton, CButtonGroup } from "@coreui/vue";
 import { ref } from "vue";
