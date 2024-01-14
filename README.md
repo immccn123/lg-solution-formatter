@@ -2,7 +2,7 @@
 
 使用方法：
 
-访问 <https://tj.imken.moe/> 直接使用构建好的 WebApp。
+访问 <https://tj.imken.dev/> 直接使用构建好的 WebApp。
 
 ## 原理
 
