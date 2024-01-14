@@ -8,8 +8,8 @@
     "test": "mocha"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Imken Luo <me@imken.moe>",
+  "license": "MIT",
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "mocha": "^10.2.0"
