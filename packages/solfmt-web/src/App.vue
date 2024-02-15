@@ -98,7 +98,7 @@ const MODE = import.meta.env.MODE;
   <p style="text-align: center; font-size: small">
     此版本仍在开发，部分表现与基于 marked.js (改) 的旧版本不同。对 Markdown
     语法容错性较差，准备编写较为宽松的语法解析器。<br />
-    本项目在 MIT 许可证下授权。
+    本项目在 MIT 许可证下授权；本 web 应用在 AGPL v3 或更新版本下授权。
     <a href="https://github.com/immccn123/lg-solution-formatter">GitHub</a>
     <br />
     Vite mode: <code>{{ MODE }}</code> | Commit Hash:
