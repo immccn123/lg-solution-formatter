@@ -38,7 +38,7 @@ const MODE = import.meta.env.MODE;
 <template>
   <div style="padding: 10px">
     <h1 style="display: inline-block">
-      洛谷题解格式化工具<sub style="font-size: small">Beta</sub>
+      洛谷题解格式化工具
     </h1>
   </div>
   <div>
