@@ -165,7 +165,7 @@ describe("Markdown 杂项", () => {
       if (!fmtedSolution.match(targetRegExp(target))) {
         throw new AssertionError({
           message:
-            `Result \n\`\`\`\n${fmtedSolution}\`\`\`\ndoes match ` +
+            `Formatted result of \n\`\`\`\n${fmtedSolution}\`\`\`\ndoes not match ` +
             `${targetRegExp(target)}`,
         });
       }
