@@ -26,6 +26,36 @@ import { formatSolutionSync } from "@imkdown/lg-solution-formatter";
 
 import { AssertionError } from "assert";
 
+const R = String.raw;
+
+/**
+ * 
+ * @param {string} desc 
+ * @param {{
+ *   name: string,
+ *   source: string,
+ *   target: string
+ * }[]} testCases 
+ */
+function test(desc, testCases) {
+  describe(desc, () => {
+    for (let i = 0; i < testCases.length; i++) {
+      const { name, source, target } = testCases[i];
+      const testId = i + 1;
+      it(`[Test Case #${testId}] ${name}`, () => {
+        const fmtedSolution = formatSolutionSync(source);
+        if (!fmtedSolution.match(targetRegExp(target))) {
+          throw new AssertionError({
+            message:
+              `Formatted result of \n\`\`\`\n${fmtedSolution}\`\`\`\ndoes not match ` +
+              `${targetRegExp(target)}`,
+          });
+        }
+      });
+    }
+  });
+}
+
 const markdownTestCases = [
   {
     name: "粗/斜体中英文混排",
@@ -156,23 +186,6 @@ const markdownTestCases = [
   },
 ];
 
-describe("Markdown 杂项", () => {
-  for (let i = 0; i < markdownTestCases.length; i++) {
-    const { name, source, target } = markdownTestCases[i];
-    const testId = i + 1;
-    it(`[Test Case #${testId}] ${name}`, () => {
-      const fmtedSolution = formatSolutionSync(source);
-      if (!fmtedSolution.match(targetRegExp(target))) {
-        throw new AssertionError({
-          message:
-            `Formatted result of \n\`\`\`\n${fmtedSolution}\`\`\`\ndoes not match ` +
-            `${targetRegExp(target)}`,
-        });
-      }
-    });
-  }
-});
-
 const mathTestCases = [
   {
     name: "星号变 \\times, == 变 =",
@@ -237,25 +250,21 @@ const mathTestCases = [
     target: "$\\operatorname{MEX}(s_1, s_2) \\operatorname{MEX}(s_2, s_3)$",
   },
   {
-    name: "公式中带下标的 C/C++ 数组形式变 _{index} 形式",
+    name: "<1/2> 公式中带下标的 C/C++ 数组形式变 _{index} 形式",
     source: "$dp[i][j][k] = dp[i][j][k - 1] + a[i]$",
     target: "$dp_{i,j,k} = dp_{i,j,k - 1} + a_{i}$",
   },
+  {
+    name: "<2/2> 公式中带下标的 C/C++ 数组形式变 _{index} 形式",
+    source: R`$\sqrt[x]{n} a dp[i][j][k] = dp[i][j][k - 1] + a[i]$`,
+    target: R`$\sqrt[x]{n} a dp_{i,j,k} = dp_{i,j,k - 1} + a_{i}$`,
+  },
+  {
+    name: "不对公式中的带方括号参数的指令进行格式化",
+    source: R`$\sqrt[x]{n}$`,
+    target: R`$\sqrt[x]{n}$`,
+  },
 ];
 
-describe("数学公式格式化", () => {
-  for (let i = 0; i < mathTestCases.length; i++) {
-    const { name, source, target } = mathTestCases[i];
-    const testId = i + 1;
-    it(`[Test Case #${testId}] ${name}`, () => {
-      const fmtedSolution = formatSolutionSync(source);
-      if (!fmtedSolution.match(targetRegExp(target))) {
-        throw new AssertionError({
-          message:
-            `Result \n\`\`\`\n${fmtedSolution}\`\`\`\ndoes match ` +
-            `${targetRegExp(target)}`,
-        });
-      }
-    });
-  }
-});
+test("Markdown 杂项", markdownTestCases)
+test("数学公式格式化", mathTestCases)
