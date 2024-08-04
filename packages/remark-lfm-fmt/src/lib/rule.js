@@ -60,7 +60,7 @@ export const mathReplaceRules = [
   { pattern: /(?<!\\operatorname{)lcm(?!})/g, replace: " \\operatorname{lcm}" },
   { pattern: /(?<!\\operatorname{)MEX(?!})/g, replace: " \\operatorname{MEX}" },
   {
-    pattern: /([a-zA-Z]+)((\[([^\]])+?\])+)/g,
+    pattern: /(?<!\\|[a-zA-Z])([a-zA-Z]+)((\[([^\]])+?\])+)/g,
     replace: (_, name, items) => {
       return (
         name + "_{" + items.replace(/\[([^\]]+?)\]/g, "$1,").slice(0, -1) + "}"
