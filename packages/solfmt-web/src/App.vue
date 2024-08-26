@@ -1,109 +1,155 @@
 <script setup lang="ts">
-import MonacoEditor, {
-  useMonaco,
-  VueMonacoDiffEditor,
-} from "@guolao/vue-monaco-editor";
-import GitHubTheme from "monaco-themes/themes/GitHub Light.json";
-import { formatSolutionSync } from "@imkdown/lg-solution-formatter";
+import CodeMirror from "vue-codemirror6";
 
-import { CButton, CButtonGroup } from "@coreui/vue";
-import { ref } from "vue";
+import { basicSetup } from "codemirror";
+import { MergeView } from "@codemirror/merge";
+import { markdown } from "@codemirror/lang-markdown";
+import { languages } from "@codemirror/language-data";
 
-const monaco = useMonaco();
+import formatSolution, {
+  formatSolutionSync,
+} from "@imkdown/lg-solution-formatter";
+
+import { ref, watch } from "vue";
+import { EditorState } from "@codemirror/state";
+
+let lastTimeout: number = 0;
+
 const code = ref("");
 
 const showFormatted = ref(false),
   showDone = ref(false);
 
-const loadTheme = () => {
-  // @ts-expect-error I don't know why but is doesn't work
-  monaco.monacoRef.value?.editor.defineTheme("github", GitHubTheme);
-};
+const mergedEditor = ref<HTMLDivElement | null>(null);
 
 const formatRaw = () => {
   code.value = formatSolutionSync(code.value);
+
   showDone.value = true;
-  setTimeout(() => (showDone.value = false), 1000);
+  clearTimeout(lastTimeout);
+  lastTimeout = setTimeout(() => (showDone.value = false), 1000);
 };
 
 const formatAndCopy = () => {
   formatRaw();
   window.navigator.clipboard.writeText(code.value);
-}
+};
 
 const COMMIT_HASH: string = import.meta.env.VITE_COMMIT_HASH;
 const MODE = import.meta.env.MODE;
+
+watch(showFormatted, async () => {
+  if (!showFormatted.value) return;
+  while (!mergedEditor.value)
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  new MergeView({
+    a: {
+      doc: code.value,
+      extensions: [
+        EditorState.readOnly.of(true),
+        basicSetup,
+        markdown({ codeLanguages: languages }),
+      ],
+    },
+    b: {
+      doc: await formatSolution(code.value),
+      extensions: [
+        EditorState.readOnly.of(true),
+        basicSetup,
+        markdown({ codeLanguages: languages }),
+      ],
+    },
+    parent: mergedEditor.value,
+  });
+});
 </script>
 
 <template>
-  <div style="padding: 10px">
-    <h1 style="display: inline-block">
-      洛谷题解格式化工具
-    </h1>
-  </div>
-  <div>
-    <div v-if="!showFormatted">
-      <div>
-        <h3 style="text-align: center">Source</h3>
-      </div>
-      <MonacoEditor height="73vh" language="markdown" theme="github" v-model:value="code" v-on:before-mount="loadTheme()"
-        :options="{ renderWhitespace: 'all', wordWrap: 'on' }" />
+  <div data-theme="cupcake">
+    <div class="p-3">
+      <h1 class="text-2xl inline-block">洛谷题解格式化工具</h1>
+      <span v-if="showFormatted"> | 差异对比</span>
     </div>
-    <div v-else>
-      <div>
-        <h3 style="display: inline-block; width: 50%; text-align: center">
-          Before
-        </h3>
-        <h3 style="display: inline-block; width: 50%; text-align: center">
-          After
-        </h3>
+    <div class="w-full">
+      <div v-if="!showFormatted">
+        <div class="border box-border w-full" id="editor">
+          <CodeMirror
+            basic
+            v-model="code"
+            :lang="markdown({ codeLanguages: languages })"
+          />
+        </div>
       </div>
-      <VueMonacoDiffEditor height="73vh" language="markdown" theme="github" :original="code"
-        :modified="formatSolutionSync(code)" :options="{
-          readOnly: true,
-          readOnlyMessage: { value: '这里不可以，呃，编辑' },
-          renderWhitespace: 'all',
-          wordWrap: 'on',
-        }" />
+      <div v-else>
+        <div id="editor" ref="mergedEditor"></div>
+      </div>
     </div>
-  </div>
-  <div style="padding: 10px">
-    <CButtonGroup role="group" size="sm">
-      <CButton color="primary" v-on:click="() => (showFormatted = !showFormatted)" variant="outline">
-        {{ showFormatted ? "返回" : "格式化并展示差异" }}
-      </CButton>
-      <CButton color="secondary" v-on:click="formatAndCopy()" variant="outline" v-if="!showFormatted">
-        格式化并复制
-      </CButton>
-      <CButton color="secondary" v-on:click="formatRaw()" variant="outline" v-if="!showFormatted">
-        仅格式化
-      </CButton>
-      <CButton disabled v-if="showDone" variant="ghost" color="info">完成！</CButton>
-    </CButtonGroup>
-    <details>
-      <summary>⚠️注意事项</summary>
-      <div>
-        <ul>
-          <li>
-            目前的 Markdown 解析器会将任意的
-            <code>$$ xxx $$</code> 处理为<b>行内</b>公式。如果需要块级公式，请在
-            <code>$$</code> 的前后换行。<br />例如：
-            <pre><code>{{ `$$\n\\TeX\n$$` }}</code></pre>
-          </li>
-          <li>请注意标题的 # 之后要添加空格，要不然会被转义。</li>
-        </ul>
+    <div class="p-3">
+      <div class="join">
+        <button
+          class="btn join-item btn-sm btn-neutral"
+          v-on:click="() => (showFormatted = !showFormatted)"
+        >
+          {{ showFormatted ? "返回" : "格式化并展示差异" }}
+        </button>
+        <button
+          class="btn join-item btn-sm btn-primary w-28"
+          v-on:click="formatAndCopy"
+          v-if="!showFormatted"
+        >
+          格式化并复制
+        </button>
+        <button
+          class="btn join-item btn-sm"
+          v-on:click="formatRaw"
+          v-if="!showFormatted"
+        >
+          仅格式化
+        </button>
       </div>
-    </details>
+      <button class="btn btn-outline btn-secondary btn-sm mx-2" v-if="showDone">
+        完成
+      </button>
+      <details>
+        <summary>⚠️注意事项</summary>
+        <div>
+          <ul>
+            <li>请注意标题的 # 之后要添加空格，要不然会被转义。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+    <p style="text-align: center; font-size: small">
+      本项目在 MIT 许可证下授权；本 web 应用在 AGPL v3 或更新版本下授权。
+      <a
+        href="https://github.com/immccn123/lg-solution-formatter"
+        class="link link-primary"
+      >
+        GitHub
+      </a>
+      <br />
+      Vite mode: <code>{{ MODE }}</code> | Commit Hash:
+      <code>{{ COMMIT_HASH.substring(0, 7) }}</code>
+    </p>
   </div>
-  <p style="text-align: center; font-size: small">
-    此版本仍在开发，部分表现与基于 marked.js (改) 的旧版本不同。对 Markdown
-    语法容错性较差，准备编写较为宽松的语法解析器。<br />
-    本项目在 MIT 许可证下授权；本 web 应用在 AGPL v3 或更新版本下授权。
-    <a href="https://github.com/immccn123/lg-solution-formatter">GitHub</a>
-    <br />
-    Vite mode: <code>{{ MODE }}</code> | Commit Hash:
-    <code>{{ COMMIT_HASH.substring(0, 7) }}</code>
-  </p>
 </template>
 
-<style scoped></style>
+<style>
+#editor {
+  height: 80vh;
+}
+
+#editor * {
+  font-family: "Fira Code", monospace;
+}
+
+#editor .cm-editor,
+#editor > * {
+  height: 100%;
+  border: none;
+}
+
+#editor .cm-scroller {
+  overflow: auto;
+}
+</style>
