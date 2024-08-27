@@ -1,0 +1,26 @@
+{
+  "name": "@imkdown/remark-clang-fmt-wasm",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "exports": {
+    "default": "./index.js"
+  },
+  "types": "index.d.ts",
+  "dependencies": {
+    "@wasm-fmt/clang-format": "^18.1.8",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.3",
+    "vfile": "^6.0.3"
+  }
+}

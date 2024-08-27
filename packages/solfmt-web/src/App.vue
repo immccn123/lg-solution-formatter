@@ -6,28 +6,45 @@ import { MergeView } from "@codemirror/merge";
 import { markdown } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 
-import formatSolution, {
-  formatSolutionSync,
-} from "@imkdown/lg-solution-formatter";
+import { formatSolution } from "@imkdown/lg-solution-formatter";
 
 import { ref, watch } from "vue";
 import { EditorState } from "@codemirror/state";
+import { useStore } from "./store";
+import { storeToRefs } from "pinia";
+import Config from "./components/Config.vue";
 
 let lastTimeout: number = 0;
 
-const code = ref("");
+const store = useStore();
+const refStore = storeToRefs(store);
+
+store.$subscribe((_mutation, state) => {
+  localStorage.setItem("state", JSON.stringify(state));
+});
+
+const code = refStore.code;
 
 const showFormatted = ref(false),
+  formatting = ref(false),
   showDone = ref(false);
 
 const mergedEditor = ref<HTMLDivElement | null>(null);
 
-const formatRaw = () => {
-  code.value = formatSolutionSync(code.value);
+const formatRaw = async () => {
+  formatting.value = true;
+
+  code.value = await formatSolution(code.value, {
+    clang: {
+      enabled: refStore.clangEnabled.value,
+      config: refStore.clangConfig.value,
+    },
+  });
 
   showDone.value = true;
   clearTimeout(lastTimeout);
   lastTimeout = setTimeout(() => (showDone.value = false), 1000);
+  formatting.value = false;
 };
 
 const formatAndCopy = () => {
@@ -37,11 +54,23 @@ const formatAndCopy = () => {
 
 const COMMIT_HASH: string = import.meta.env.VITE_COMMIT_HASH;
 const MODE = import.meta.env.MODE;
+const showConfig = ref(0);
 
 watch(showFormatted, async () => {
   if (!showFormatted.value) return;
+  formatting.value = true;
   while (!mergedEditor.value)
     await new Promise((resolve) => setTimeout(resolve, 20));
+
+  const solution = await formatSolution(code.value, {
+    clang: {
+      enabled: refStore.clangEnabled.value,
+      config: refStore.clangConfig.value,
+    },
+  });
+
+  formatting.value = false;
+
   new MergeView({
     a: {
       doc: code.value,
@@ -52,7 +81,7 @@ watch(showFormatted, async () => {
       ],
     },
     b: {
-      doc: await formatSolution(code.value),
+      doc: solution,
       extensions: [
         EditorState.readOnly.of(true),
         basicSetup,
@@ -69,6 +98,10 @@ watch(showFormatted, async () => {
     <div class="p-3">
       <h1 class="text-2xl inline-block">洛谷题解格式化工具</h1>
       <span v-if="showFormatted"> | 差异对比</span>
+      <span v-else>
+        | By
+        <a href="https://imken.moe" class="link link-primary">Imken</a>
+      </span>
     </div>
     <div class="w-full">
       <div v-if="!showFormatted">
@@ -87,15 +120,23 @@ watch(showFormatted, async () => {
     <div class="p-3">
       <div class="join">
         <button
-          class="btn join-item btn-sm btn-neutral"
+          class="btn join-item btn-sm btn-neutral w-36"
           v-on:click="() => (showFormatted = !showFormatted)"
+          :disabled="formatting"
         >
-          {{ showFormatted ? "返回" : "格式化并展示差异" }}
+          <span
+            v-if="formatting"
+            class="loading loading-ring loading-md"
+          ></span>
+          <span v-else>
+            {{ showFormatted ? "返回" : "格式化并展示差异" }}
+          </span>
         </button>
         <button
           class="btn join-item btn-sm btn-primary w-28"
           v-on:click="formatAndCopy"
           v-if="!showFormatted"
+          :disabled="formatting"
         >
           格式化并复制
         </button>
@@ -103,8 +144,17 @@ watch(showFormatted, async () => {
           class="btn join-item btn-sm"
           v-on:click="formatRaw"
           v-if="!showFormatted"
+          :disabled="formatting"
         >
           仅格式化
+        </button>
+        <button
+          class="btn join-item btn-sm"
+          v-on:click="() => showConfig++"
+          v-if="!showFormatted"
+          :disabled="formatting"
+        >
+          选项设置
         </button>
       </div>
       <button class="btn btn-outline btn-secondary btn-sm mx-2" v-if="showDone">
@@ -132,6 +182,8 @@ watch(showFormatted, async () => {
       <code>{{ COMMIT_HASH.substring(0, 7) }}</code>
     </p>
   </div>
+
+  <Config :open="showConfig" />
 </template>
 
 <style>

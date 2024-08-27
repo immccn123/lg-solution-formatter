@@ -19,7 +19,8 @@
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
-    "remark-stringify": "^11.0.0"
+    "remark-stringify": "^11.0.0",
+    "@imkdown/remark-clang-fmt-wasm": "workspace:^"
   },
   "exports": {
     "default": "./index.js"
