@@ -11,10 +11,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "exports": {
-    "default": "./index.js"
-  },
-  "types": "index.d.ts",
+  "types": "vite.d.ts",
   "dependencies": {
     "@wasm-fmt/clang-format": "^18.1.8",
     "unist-util-visit": "^5.0.0"

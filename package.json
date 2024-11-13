@@ -11,8 +11,8 @@
   "author": "Imken Luo <me@imken.moe>",
   "license": "MIT",
   "devDependencies": {
-    "@types/mocha": "^10.0.6",
-    "mocha": "^10.2.0"
+    "@types/mocha": "^10.0.9",
+    "mocha": "^10.8.2"
   },
   "dependencies": {
     "@imkdown/lg-solution-formatter": "workspace:^"

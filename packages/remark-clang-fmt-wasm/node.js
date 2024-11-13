@@ -6,7 +6,7 @@
 
 
 // @ts-ignore
-import init, { format } from "@wasm-fmt/clang-format/clang-format-vite.js";
+import init, { format } from "@wasm-fmt/clang-format/clang-format-node.js";
 import { visit } from "unist-util-visit";
 
 /**

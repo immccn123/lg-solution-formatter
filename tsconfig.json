@@ -5,7 +5,7 @@
     "emitDeclarationOnly": true,
     "exactOptionalPropertyTypes": true,
     "lib": ["ES2020", "ESNext"],
-    "module": "ES2015",
+    "module": "ES2020",
     "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "strict": true,

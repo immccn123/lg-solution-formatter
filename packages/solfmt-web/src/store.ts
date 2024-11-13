@@ -63,8 +63,10 @@ $$a[i][j] != b[i][j]$$
 中文标点和英文标点有时会挨在一起，比如“哈罗,World!”,这应该得到适当的处理。`;
 
 const CLANG_DEFAULT_CONFIG = `---
-BasedOnStyle: WebKit
-IndentWidth: 4`
+BasedOnStyle: Google
+IndentWidth: 4
+UseTab: Always
+TabWidth: 4`
 
 interface State {
   code: string;

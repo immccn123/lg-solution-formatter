@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 /**
  * @imkdown/lg-solution-formatter
  * ---
@@ -11,7 +13,6 @@ import remarkMath from "remark-math";
 import remarkStringify from "remark-stringify";
 import remarkLfmFmt from "@imkdown/remark-lfm-fmt";
 import remarkGfm from "remark-gfm";
-import remarkClangFmtWasm from "@imkdown/remark-clang-fmt-wasm";
 
 /**
  * @typedef {{
@@ -34,7 +35,13 @@ const formatSolution = async (sourceStr, config = {}) => {
     .use(remarkStringify, { bullet: "-", rule: "-" });
 
   if (config.clang?.enabled) {
-    rem = rem.use(remarkClangFmtWasm, config.clang.config);
+    if (import.meta.env) {
+      const vitePlugin = await import("@imkdown/remark-clang-fmt-wasm/vite.js");
+      rem = rem.use(vitePlugin.default, config.clang.config);
+    } else {
+      const nodePlugin = await import("@imkdown/remark-clang-fmt-wasm/node.js");
+      rem = rem.use(nodePlugin.default, config.clang.config);
+    }
   }
 
   const file = await rem.process(sourceStr);
