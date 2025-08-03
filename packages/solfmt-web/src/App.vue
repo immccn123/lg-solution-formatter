@@ -101,6 +101,9 @@ watch(showFormatted, async () => {
       <span v-else>
         | By
         <a href="https://imken.moe" class="link link-primary">Imken</a>
+        {{ " " }}
+        (<a href="https://sponsor.imken.moe" class="link link-secondary">捐赠</a
+        >)
       </span>
     </div>
     <div class="w-full">
@@ -160,17 +163,10 @@ watch(showFormatted, async () => {
       <button class="btn btn-outline btn-secondary btn-sm mx-2" v-if="showDone">
         完成
       </button>
-      <details>
-        <summary>⚠️注意事项</summary>
-        <div>
-          <ul>
-            <li>请注意标题的 # 之后要添加空格，要不然会被转义。</li>
-          </ul>
-        </div>
-      </details>
     </div>
+
     <p style="text-align: center; font-size: small">
-      本项目在 MIT 许可证下授权；本 web 应用在 AGPL v3 或更新版本下授权。
+      本 web 应用在 AGPL v3 或更新版本下授权，本项目的其他部分在 MIT 许可证下授权。
       <a
         href="https://github.com/immccn123/lg-solution-formatter"
         class="link link-primary"

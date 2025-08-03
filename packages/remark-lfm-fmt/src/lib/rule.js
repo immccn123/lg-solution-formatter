@@ -109,4 +109,13 @@ export const toFullWidthExtraRules = [
     pattern: /\.{3,}/g,
     replace: (match) => "…".repeat(Math.min(Math.ceil(match.length / 3), 2)),
   },
+  {
+    pattern: /… /g,
+    replace: (match) => "…".repeat(Math.min(Math.ceil(match.length / 3), 2)),
+  },
+  {
+    // 盘古的规则在这歌方面不太适合
+    pattern: CJKRgx(`({CJK}) / ({CJK})`, "g"),
+    replace: "$1/$2"
+  },
 ];

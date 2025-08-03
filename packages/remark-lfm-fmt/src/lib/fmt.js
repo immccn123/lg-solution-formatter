@@ -5,14 +5,16 @@
  */
 
 /// <reference types="mdast-util-math" />
+/// <reference types="mdast-util-directive" />
 
 import { concatToken, formatMath, formatText } from "./helper.js";
 import { shouldAddSpace } from "./rule.js";
+import { visit } from "unist-util-visit";
 
-export default function remarkLfmFmt() {
+export default function remarkLfmFmt(config = {}) {
   /** @param {RootContent} node */
   function findFirstDescendant(node) {
-    if ("children" in node) {
+    if (node && "children" in node) {
       return findFirstDescendant(node.children[0]);
     }
 
@@ -21,7 +23,7 @@ export default function remarkLfmFmt() {
 
   /** @param {RootContent} node */
   function findLastDescendant(node) {
-    if ("children" in node) {
+    if (node && "children" in node) {
       return findLastDescendant(node.children[node.children.length - 1]);
     }
 
@@ -39,7 +41,8 @@ export default function remarkLfmFmt() {
       case "blockquote":
       case "list":
       case "table":
-      case "tableRow": {
+      case "tableRow":
+      case "containerDirective": {
         node.children.forEach(format);
         break;
       }
@@ -62,6 +65,9 @@ export default function remarkLfmFmt() {
 
           const prevNode = findLastDescendant(node.children[i - 1]);
           const currNode = findFirstDescendant(node.children[i]);
+
+          if (prevNode == undefined) console.log(node, i);
+          if (currNode == undefined) console.log(node, i);
 
           if (prevNode.type === "text") {
             if (currNode.type === "text") {
@@ -134,7 +140,46 @@ export default function remarkLfmFmt() {
       // case "definition":
       // case "footnoteDefinition":
       // case "footnoteReference":
+      // case "leafDirective":
+      // case "textDirective": // do not parse
     }
+  }
+
+  /**
+   * The plugin.
+   *
+   * @param {Root} tree
+   * @returns {Root}
+   */
+
+  function preprocess(tree) {
+    visit(tree, "paragraph", (paragraphNode) => {
+      /** @type {import("mdast").PhrasingContent[]} */
+      const newChildren = [];
+      let currentText = "";
+
+      for (const child of paragraphNode.children) {
+        if (child.type === "text" || child.type === "textDirective") {
+          const content =
+            child.type === "text" ? child.value : `:${child.name}`;
+          currentText += content;
+        } else {
+          if (currentText !== "") {
+            newChildren.push({ type: "text", value: currentText });
+            currentText = "";
+          }
+          newChildren.push(child);
+        }
+      }
+
+      if (currentText !== "") {
+        newChildren.push({ type: "text", value: currentText });
+      }
+
+      paragraphNode.children = newChildren;
+    });
+
+    return tree;
   }
 
   /**
@@ -145,5 +190,5 @@ export default function remarkLfmFmt() {
    * @returns
    *   Nothing.
    */
-  return (tree) => tree.children.forEach((x) => format(x));
+  return (tree) => preprocess(tree).children.forEach((x) => format(x));
 }

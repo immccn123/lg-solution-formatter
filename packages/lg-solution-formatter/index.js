@@ -13,13 +13,14 @@ import remarkMath from "remark-math";
 import remarkStringify from "remark-stringify";
 import remarkLfmFmt from "@imkdown/remark-lfm-fmt";
 import remarkGfm from "remark-gfm";
+import remarkDirective from "remark-directive";
 
 /**
  * @typedef {{
  *   clang?: {
  *     enabled?: boolean,
  *     config?: string
- *   }
+ *   };
  *  }} Config
  */
 
@@ -32,7 +33,9 @@ const formatSolution = async (sourceStr, config = {}) => {
     .use(remarkMath, { singleDollarTextMath: true })
     .use(remarkGfm)
     .use(remarkLfmFmt)
-    .use(remarkStringify, { bullet: "-", rule: "-" });
+    .use(remarkStringify, { bullet: "-", rule: "-" })
+    .use(remarkDirective);
+
 
   if (config.clang?.enabled) {
     if (import.meta.env) {
@@ -59,7 +62,9 @@ const formatSolutionSync = (sourceStr) => {
     .use(remarkGfm)
     .use(remarkLfmFmt)
     .use(remarkStringify, { bullet: "-", rule: "-" })
+    .use(remarkDirective)
     .processSync(sourceStr);
+
   return String(file);
 };
 

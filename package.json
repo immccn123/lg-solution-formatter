@@ -5,14 +5,13 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "test": "mocha"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "Imken Luo <me@imken.moe>",
   "license": "MIT",
   "devDependencies": {
-    "@types/mocha": "^10.0.9",
-    "mocha": "^10.8.2"
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@imkdown/lg-solution-formatter": "workspace:^"

@@ -1,4 +1,4 @@
-/// <reference types="mocha" />
+/// <reference types="vitest" />
 
 /**
  * @param {string} target
@@ -22,37 +22,30 @@ const targetRegExp = (target) => {
   );
 };
 
-import { formatSolutionSync } from "@imkdown/lg-solution-formatter";
+import { formatSolution } from "@imkdown/lg-solution-formatter";
+import { expect, test, describe } from "vitest";
 
 import { AssertionError } from "assert";
 
 const R = String.raw;
 
 /**
- * 
- * @param {string} desc 
+ *
+ * @param {string} desc
  * @param {{
  *   name: string,
  *   source: string,
  *   target: string
- * }[]} testCases 
+ * }[]} testCases
  */
-function test(desc, testCases) {
+function testAll(desc, testCases) {
   describe(desc, () => {
-    for (let i = 0; i < testCases.length; i++) {
-      const { name, source, target } = testCases[i];
-      const testId = i + 1;
-      it(`[Test Case #${testId}] ${name}`, () => {
-        const fmtedSolution = formatSolutionSync(source);
-        if (!fmtedSolution.match(targetRegExp(target))) {
-          throw new AssertionError({
-            message:
-              `Formatted result of \n\`\`\`\n${fmtedSolution}\`\`\`\ndoes not match ` +
-              `${targetRegExp(target)}`,
-          });
-        }
+    testCases.forEach(({ name, source, target }) => {
+      test.concurrent(name, async () => {
+        const fmtedSolution = await formatSolution(source);
+        expect(fmtedSolution).toMatch(targetRegExp(target));
       });
-    }
+    });
   });
 }
 
@@ -105,22 +98,22 @@ const markdownTestCases = [
   {
     name: "<1/4> 三个英文句点到省略号的转换",
     source: "但是...我不知道怎么做",
-    target: "但是… 我不知道怎么做",
+    target: "但是…我不知道怎么做",
   },
   {
     name: "<2/4> 三个英文句点到省略号的转换",
     source: "但是....我不知道怎么做",
-    target: "但是…… 我不知道怎么做",
+    target: "但是……我不知道怎么做",
   },
   {
     name: "<3/4> 三个英文句点到省略号的转换",
     source: "但是......我不知道怎么做",
-    target: "但是…… 我不知道怎么做",
+    target: "但是……我不知道怎么做",
   },
   {
     name: "<4/4> 三个英文句点到省略号的转换",
     source: "但是................我不知道怎么做",
-    target: "但是…… 我不知道怎么做",
+    target: "但是……我不知道怎么做",
   },
   {
     name: "链接前的空格缺失和英文括号的空格缺失",
@@ -183,6 +176,16 @@ const markdownTestCases = [
     name: "多级有序列表",
     source: "1. QwQ\n   1. quq可爱捏\n   1. qwq",
     target: "1. QwQ\n   1. quq 可爱捏\n   2. qwq",
+  },
+  {
+    name: "详细信息块的识别与格式化",
+    source: `:::info[舞萌DX]\n不要越级打15\n:::`,
+    target: `:::info[舞萌 DX]\n不要越级打 15\n:::`,
+  },
+  {
+    name: "文本标签不应被识别",
+    source: R`这是我们最新最热的 Re:Master 难度`,
+    target: R`这是我们最新最热的 Re\:Master 难度`,
   },
 ];
 
@@ -266,5 +269,5 @@ const mathTestCases = [
   },
 ];
 
-test("Markdown 杂项", markdownTestCases)
-test("数学公式格式化", mathTestCases)
+testAll("Markdown 杂项", markdownTestCases);
+testAll("数学公式格式化", mathTestCases);

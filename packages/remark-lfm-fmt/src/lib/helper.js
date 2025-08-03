@@ -11,7 +11,9 @@ import {
 /** @param {string} str */
 export const removeDuplSpaces = (str) => str.replace(/ +/g, " ");
 
-/** @param {string} text */
+/**
+ * @param {string} text
+ */
 export const formatText = (text) => {
   let res = pangu.spacing(removeDuplSpaces(text.trim()));
 

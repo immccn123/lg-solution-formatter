@@ -1,16 +1,17 @@
 {
   "name": "@imkdown/remark-lfm-fmt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A remark plugin for Markdown that formats Markdown to meet \"Solution Standard of Luogu Main Problem Set\" (洛谷主题库题解规范)",
-  "main": "index.js",
   "types": "index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "types": "./index.d.ts"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "exports": {
-    "default": "./index.js",
-    "types": "./index.d.ts"
   },
   "keywords": [],
   "author": "Imken Luo <me@imken.moe>",
@@ -23,7 +24,9 @@
     "@types/mdast": "^4.0.3",
     "@types/node": "^20.10.4",
     "@types/pangu": "^4.0.2",
+    "mdast-util-directive": "^3.1.0",
     "mdast-util-math": "^3.0.0",
-    "remark": "^15.0.1"
+    "remark": "^15.0.1",
+    "vfile": "^6.0.3"
   }
 }
