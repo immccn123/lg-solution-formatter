@@ -25,8 +25,6 @@ const targetRegExp = (target) => {
 import { formatSolution } from "@imkdown/lg-solution-formatter";
 import { expect, test, describe } from "vitest";
 
-import { AssertionError } from "assert";
-
 const R = String.raw;
 
 /**
@@ -38,18 +36,20 @@ const R = String.raw;
  *   target: string
  * }[]} testCases
  */
-function testAll(desc, testCases) {
+function testAll(desc, testCases, fw = true) {
   describe(desc, () => {
     testCases.forEach(({ name, source, target }) => {
       test.concurrent(name, async () => {
-        const fmtedSolution = await formatSolution(source);
+        const fmtedSolution = await formatSolution(source, {
+          fwPunctuation: fw,
+        });
         expect(fmtedSolution).toMatch(targetRegExp(target));
       });
     });
   });
 }
 
-const markdownTestCases = [
+const markdownTestCasesFw = [
   {
     name: "粗/斜体中英文混排",
     source: "**Bold*和斜体with English*混排的案例**",
@@ -187,9 +187,29 @@ const markdownTestCases = [
     source: R`这是我们最新最热的 Re:Master 难度`,
     target: R`这是我们最新最热的 Re\:Master 难度`,
   },
+  {
+    name: "斜体里的文本标签不应被识别",
+    source: R`_这是我们最新最热的 Re:Master 难度_`,
+    target: R`*这是我们最新最热的 Re\:Master 难度*`,
+  },
+  {
+    name: "粗体里的文本标签不应被识别",
+    source: R`**这是我们最新最热的 Re:Master 难度**`,
+    target: R`**这是我们最新最热的 Re\:Master 难度**`,
+  },
+  {
+    name: "标题里的文本标签不应被识别",
+    source: R`## 这是我们最新最热的 Re:Master 难度`,
+    target: R`## 这是我们最新最热的 Re\:Master 难度`,
+  },
+  {
+    name: "句末点号改为句号",
+    source: R`OK.现在我们得到了答案.`,
+    target: R`OK. 现在我们得到了答案。`,
+  },
 ];
 
-const mathTestCases = [
+const mathTestCasesFw = [
   {
     name: "星号变 \\times, == 变 =",
     source: "仅当 $ a * b == c $ 的时候，我们才可以继续。",
@@ -269,5 +289,91 @@ const mathTestCases = [
   },
 ];
 
-testAll("Markdown 杂项", markdownTestCases);
-testAll("数学公式格式化", mathTestCases);
+const markdownTestCasesHw = [
+  {
+    name: "粗/斜体中英文混排",
+    source: "**Bold*和斜体with English*混排的案例**",
+    target: "**Bold *和斜体 with English* 混排的案例**",
+  },
+  {
+    name: "数学公式后的多余空格",
+    source: "比方说 $1001,1010,1011$ 。现在判断 $1101$。",
+    target: "比方说 $1001,1010,1011$. 现在判断 $1101$.",
+  },
+  {
+    name: "数学公式前的多余空格及后部缺失空格",
+    source: "不难看出， $N$的范围十分小，所以暴力即可。",
+    target: "不难看出, $N$ 的范围十分小, 所以暴力即可.",
+  },
+  {
+    name: "英文逗号后方缺失空格",
+    source: "显然 $N\\le 10$,所以暴力即可。",
+    target: "显然 $N\\le 10$, 所以暴力即可.",
+  },
+  {
+    name: "数字 + 字母的组合和中文混排",
+    source: "一道思路和这个类似的题是CF1765F，结论大差不差。",
+    target: "一道思路和这个类似的题是 CF1765F, 结论大差不差.",
+  },
+  {
+    name: "<1/2> 内联代码和中文以及标点的混排",
+    source: "对于这道题，我们可以使用`unordered_map` .",
+    target: "对于这道题, 我们可以使用 `unordered_map`.",
+  },
+  {
+    name: "<2/2> 内联代码和中文以及标点的混排",
+    source: "对于这道题，我们可以使用 `unordered_map`。",
+    target: "对于这道题, 我们可以使用 `unordered_map`.",
+  },
+  {
+    name: "链接前后的空格缺失和英文括号的空格缺失",
+    source: "这道题是[1358：中缀表达式值(expr)](link)很典的一道题。",
+    target: "这道题是 [1358: 中缀表达式值 (expr)](link) 很典的一道题.",
+  },
+  {
+    name: "中文字符和中文标点之间的多余空格",
+    source: "`&` 的运算规则 ：",
+    target: "`&` 的运算规则:",
+  },
+  {
+    name: "<1/2> 前后有空格的英文标点",
+    source: "先算 `&` 关联逻辑表达式的值 , 再算 `|` 关联逻辑表达式的值",
+    target: "先算 `&` 关联逻辑表达式的值, 再算 `|` 关联逻辑表达式的值",
+  },
+  {
+    name: "<2/2> 前后有空格的英文标点",
+    source:
+      "这样 , 数组第一维是不是就可以压成 2 了呢？另外 , 因为是滚动数组 , 所以如果当前位置被马拦住了一定要记住清零。代码 :",
+    target:
+      "这样, 数组第一维是不是就可以压成 2 了呢? 另外, 因为是滚动数组, 所以如果当前位置被马拦住了一定要记住清零. 代码:",
+  },
+  {
+    name: "中英文标点混排",
+    source: "中文English! 你好！中文English,  你好！",
+    target: "中文 English! 你好! 中文 English, 你好!",
+  },
+  {
+    name: "中文排版中粗体字边缘不应添加空格 (issue #4)",
+    source: "1. 两种运算并列时，`&` 运算**优先**于 `|` 运算。",
+    target: "1. 两种运算并列时, `&` 运算**优先**于 `|` 运算.",
+  },
+  {
+    name: "半角标点后代码块应添加空格",
+    source: "两种运算并列时,`&` 运算**优先**于 `|` 运算。",
+    target: "两种运算并列时, `&` 运算**优先**于 `|` 运算.",
+  },
+  {
+    name: "数学公式前后标点分析正确性",
+    source: String.raw`$3 \ m \ x_1 \ x_2 \ x_m$：将 $x_1, x_2, \ldots, x_m$ 号序列顺次拼接，得到一个新序列，并询问其众数。如果不存在满足上述条件的数，则返回 $-1$。数据保证对于任意 $1 \le i \le m$，$x_i$ 是一个仍然存在的序列，$1 \le x_i \le n + q$，且拼接得到的序列非空。**注意：不保证 $\boldsymbol{x_1, \ldots, x_m}$ 互不相同，询问中的合并操作不会对后续操作产生影响。**`,
+    target: String.raw`$3 \ m \ x_1 \ x_2 \ x_m$: 将 $x_1, x_2, \ldots, x_m$ 号序列顺次拼接, 得到一个新序列, 并询问其众数. 如果不存在满足上述条件的数, 则返回 $-1$. 数据保证对于任意 $1 \le i \le m$, $x_i$ 是一个仍然存在的序列, $1 \le x_i \le n + q$, 且拼接得到的序列非空. **注意: 不保证 $\boldsymbol{x_1, \ldots, x_m}$ 互不相同, 询问中的合并操作不会对后续操作产生影响.**`,
+  },
+  {
+    name: "句末句号改为点号",
+    source: R`OK.现在我们得到了答案。`,
+    target: R`OK. 现在我们得到了答案.`,
+  },
+];
+
+testAll("<全角/默认配置> Markdown 杂项", markdownTestCasesFw);
+testAll("<半角配置> Markdown 杂项", markdownTestCasesHw, false);
+testAll("<全角/默认配置> 数学公式格式化", mathTestCasesFw);

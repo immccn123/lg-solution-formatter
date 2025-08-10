@@ -7,11 +7,27 @@
 /// <reference types="mdast-util-math" />
 /// <reference types="mdast-util-directive" />
 
-import { concatToken, formatMath, formatText } from "./helper.js";
+import {
+  concatToken,
+  formatMath,
+  formatText as _formatText,
+} from "./helper.js";
 import { shouldAddSpace } from "./rule.js";
 import { visit } from "unist-util-visit";
 
+/**
+ * @typedef Config
+ *   @property {boolean} [fwPunctuation=true]
+ */
+
+/**
+ * @param {Config} config
+ */
 export default function remarkLfmFmt(config = {}) {
+  const { fwPunctuation = true } = config;
+  /** @param {string} text */
+  const formatText = (text) => _formatText(text, fwPunctuation);
+
   /** @param {RootContent} node */
   function findFirstDescendant(node) {
     if (node && "children" in node) {
@@ -145,20 +161,32 @@ export default function remarkLfmFmt(config = {}) {
     }
   }
 
+  const preprocessNodeTypeMap = [
+    "delete",
+    "emphasis",
+    "heading",
+    "link",
+    "linkReference",
+    "listItem",
+    "paragraph",
+    "strong",
+    "tableCell",
+  ];
+
   /**
-   * The plugin.
+   * Preprocess.
    *
    * @param {Root} tree
    * @returns {Root}
    */
-
   function preprocess(tree) {
-    visit(tree, "paragraph", (paragraphNode) => {
+    visit(tree, preprocessNodeTypeMap, (node) => {
       /** @type {import("mdast").PhrasingContent[]} */
       const newChildren = [];
       let currentText = "";
 
-      for (const child of paragraphNode.children) {
+      // @ts-expect-error 有 children
+      for (const child of node.children) {
         if (child.type === "text" || child.type === "textDirective") {
           const content =
             child.type === "text" ? child.value : `:${child.name}`;
@@ -176,7 +204,8 @@ export default function remarkLfmFmt(config = {}) {
         newChildren.push({ type: "text", value: currentText });
       }
 
-      paragraphNode.children = newChildren;
+      // @ts-expect-error 有 children
+      node.children = newChildren;
     });
 
     return tree;

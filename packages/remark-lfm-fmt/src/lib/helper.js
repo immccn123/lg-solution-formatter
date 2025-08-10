@@ -1,26 +1,42 @@
-import pangu from "pangu";
 import {
-  TO_HALF_WIDTH_BEGIN,
-  isCJK,
-  isCJKPunctuation,
+  TO_HW_BEGIN,
+  fwPunctuationToHw,
+  isCjk,
+  isCjkPunctuation,
   mathReplaceRules,
-  toFullWidth,
-  toFullWidthExtraRules,
+  punctuationCjkToFw,
+  textPreprocessRules,
+  toFw,
+  toFwExtraRules,
 } from "./rule.js";
+import pangu from "pangu";
 
 /** @param {string} str */
 export const removeDuplSpaces = (str) => str.replace(/ +/g, " ");
 
 /**
  * @param {string} text
+ * @param {boolean} fwPunctuation
  */
-export const formatText = (text) => {
-  let res = pangu.spacing(removeDuplSpaces(text.trim()));
+export const formatText = (text, fwPunctuation) => {
+  let res = pangu.spacingText(removeDuplSpaces(text.trim()));
 
-  toFullWidthExtraRules.forEach((rule) => {
+  textPreprocessRules.forEach((rule) => {
     // @ts-ignore 有点搞不明白为什么这里必须针对 typeof rule.replace === "string" 条件分开写一样的东西
     res = res.replace(rule.pattern, rule.replace);
   });
+
+  if (fwPunctuation) {
+    toFwExtraRules.forEach((rule) => {
+      // @ts-ignore 同上
+      res = res.replace(rule.pattern, rule.replace);
+    });
+    res = punctuationCjkToFw(res);
+  } else {
+    let flag = text.endsWith(" ");
+    res = fwPunctuationToHw(res);
+    if (!flag) res = res.trimEnd();
+  }
 
   if (text.startsWith(" ")) res = " " + res;
   if (text.endsWith(" ")) res = res + " ";
@@ -58,21 +74,19 @@ export const concatToken = (left, right, addExtraSpace = false) => {
     isRightTrimed = tRight !== right,
     isTrimed = isLeftTrimed || isRightTrimed;
 
-  if (isCJKPunctuation(leftEnd) || isCJKPunctuation(rightBegin))
+  if (isCjkPunctuation(leftEnd) || isCjkPunctuation(rightBegin))
     return { left: tLeft, right: tRight, addSpace: false, addSpaceNext: false };
 
   // **好的**, 但是
-  if (isCJK(leftEnd) && TO_HALF_WIDTH_BEGIN.test(tRight))
+  if (isCjk(leftEnd) && TO_HW_BEGIN.test(tRight))
     return {
       left: tLeft,
-      right: tRight.replace(TO_HALF_WIDTH_BEGIN, (match) =>
-        toFullWidth(match.trim())
-      ),
+      right: tRight.replace(TO_HW_BEGIN, (match) => toFw(match.trim())),
       addSpace: false,
       addSpaceNext: false,
     };
 
-  if (isCJK(leftEnd) && isCJK(rightBegin))
+  if (isCjk(leftEnd) && isCjk(rightBegin))
     return {
       left: tLeft,
       right: tRight,
@@ -80,10 +94,10 @@ export const concatToken = (left, right, addExtraSpace = false) => {
       addSpaceNext: addExtraSpace ? false : isTrimed,
     };
 
-  if (isCJK(leftEnd) !== isCJK(rightBegin))
+  if (isCjk(leftEnd) !== isCjk(rightBegin))
     return { left: tLeft, right: tRight, addSpace: true, addSpaceNext: false };
 
-  if (!isCJK(leftEnd) && !isCJK(rightBegin))
+  if (!isCjk(leftEnd) && !isCjk(rightBegin))
     return {
       left: tLeft,
       right: tRight,

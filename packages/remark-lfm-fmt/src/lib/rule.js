@@ -9,27 +9,26 @@ export const CJK =
   "\u2e80-\u2eff\u2f00-\u2fdf\u3040-\u309f\u30a0-\u30fa\u30fc-\u30ff\u3100-\u312f\u3200-\u32ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff";
 export const CJK_REGEX = new RegExp(`[${CJK}]`);
 
-export const CJK_PUNCTUATION = /[，。【】「」『』❲❳［］（）《》！？“”、～；：]/;
-export const HALF_WIDTH_TO_FULL_WIDTH = /[\!\?\.,:;]/;
-export const TO_HALF_WIDTH = /[\!\?\.,:;] */;
-export const TO_HALF_WIDTH_BEGIN = /^[\!\?\.,:;] */;
+export const FW_PUNCTUATION = /[，。【】「」『』❲❳［］（）《》！？“”、～；：]/;
+export const HW_PUNCTUATION = /[\!\?\.,:;]/;
+export const TO_HW_BEGIN = /^[\!\?\.,:;] */;
 
 /**
  *
  * @param {string} pattern
  * @param {string} [flags]
  */
-export const CJKRgx = (pattern, flags) =>
+export const CjkRgx = (pattern, flags) =>
   new RegExp(pattern.replace(/\{CJK\}/g, `[${CJK}]`), flags);
 
 /** @param {string} chr */
-export const isCJK = (chr) => CJK_REGEX.test(chr);
+export const isCjk = (chr) => CJK_REGEX.test(chr);
 
 /** @param {string} chr */
-export const isCJKPunctuation = (chr) => CJK_PUNCTUATION.test(chr);
+export const isCjkPunctuation = (chr) => FW_PUNCTUATION.test(chr);
 
 /** @param {string} chr */
-export const toFullWidth = (chr) =>
+export const toFw = (chr) =>
   chr
     .replace(/,/g, "，")
     .replace(/:/g, "：")
@@ -37,6 +36,26 @@ export const toFullWidth = (chr) =>
     .replace(/\!/g, "！")
     .replace(/\?/g, "？")
     .replace(/\./g, "。");
+
+/** @param {string} text */
+export const punctuationCjkToFw = (text) =>
+  text
+    .replace(CjkRgx("({CJK}),\\s*", "g"), "$1，")
+    .replace(CjkRgx("({CJK}):\\s*", "g"), "$1：")
+    .replace(CjkRgx("({CJK});\\s*", "g"), "$1；")
+    .replace(CjkRgx("({CJK})\\!\\s*", "g"), "$1！")
+    .replace(CjkRgx("({CJK})\\?\\s*", "g"), "$1？")
+    .replace(CjkRgx("({CJK})\\.\\s*", "g"), "$1。");
+
+/** @param {string} text */
+export const fwPunctuationToHw = (text) =>
+  text
+    .replace(/，\s*/g, ", ")
+    .replace(/：\s*/g, ": ")
+    .replace(/；\s*/g, "; ")
+    .replace(/！\s*/g, "! ")
+    .replace(/？\s*/g, "? ")
+    .replace(/。\s*/g, ". ");
 
 /**
  * @type {ReplaceRule[]}
@@ -83,28 +102,54 @@ export const shouldAddSpace = (left, right, addExtraSpace = false) => {
    * + 这个想法很 naive，就是说……
    * ```
    */
-  if (isCJKPunctuation(left) || isCJKPunctuation(right)) return false;
+  if (isCjkPunctuation(left) || isCjkPunctuation(right)) return false;
+  /**
+   * 半角标点之后的任意字符需要添加空格。
+   *      Sentence. Another sentence.
+   *              ^ ^
+   */
+
+  if (HW_PUNCTUATION.test(left) && !HW_PUNCTUATION.test(right)) return true;
+  /**
+   * 半角标点之前的任意字符不能添加空格。
+   *      Sentence.
+   *             ^^
+   */
+  if (!HW_PUNCTUATION.test(left) && HW_PUNCTUATION.test(right)) return false;
   /**
    * 中文之间通常不需要添加，除非明确标记额外添加空格。
    * 同理来说英文也是这样的，但是这个需要 @link concatToken 的时候进行一个特判。
    */
-  if (isCJK(left) === isCJK(right)) return addExtraSpace;
+  if (isCjk(left) === isCjk(right)) return addExtraSpace;
   return true;
 };
 
 /**
  * @type {ReplaceRule[]}
  *
+ * 文本预处理替换规则
+ */
+export const textPreprocessRules = [
+  {
+    pattern: CjkRgx(`(${HW_PUNCTUATION.source})({CJK})`, "g"),
+    replace: "$1 $2",
+  },
+  {
+    pattern: CjkRgx(`({CJK}) +(${HW_PUNCTUATION.source})`, "g"),
+    replace: "$1$2",
+  },
+  {
+    pattern: CjkRgx(`({CJK}) +(${FW_PUNCTUATION.source})`, "g"),
+    replace: "$1$2",
+  },
+];
+
+/**
+ * @type {ReplaceRule[]}
+ *
  * 额外的全半角标点的替换规则
  */
-export const toFullWidthExtraRules = [
-  { pattern: CJKRgx(`({CJK}) *\\:`, "g"), replace: toFullWidth("$1：") },
-  {
-    pattern: CJKRgx(`({CJK}) +(${CJK_PUNCTUATION.source})`, "g"),
-    replace: (_, char, punt) => {
-      return `${char}${toFullWidth(punt)}`;
-    },
-  },
+export const toFwExtraRules = [
   {
     pattern: /\.{3,}/g,
     replace: (match) => "…".repeat(Math.min(Math.ceil(match.length / 3), 2)),
@@ -112,10 +157,5 @@ export const toFullWidthExtraRules = [
   {
     pattern: /… /g,
     replace: (match) => "…".repeat(Math.min(Math.ceil(match.length / 3), 2)),
-  },
-  {
-    // 盘古的规则在这歌方面不太适合
-    pattern: CJKRgx(`({CJK}) / ({CJK})`, "g"),
-    replace: "$1/$2"
   },
 ];

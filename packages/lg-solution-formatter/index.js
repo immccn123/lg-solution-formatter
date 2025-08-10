@@ -21,21 +21,22 @@ import remarkDirective from "remark-directive";
  *     enabled?: boolean,
  *     config?: string
  *   };
+ *   fwPunctuation?: boolean;
  *  }} Config
  */
 
 /**
  * @param {string} sourceStr
- * @param {Config} config
+ * @param {Config | undefined} config
  */
 const formatSolution = async (sourceStr, config = {}) => {
+  const { fwPunctuation = true } = config;
   let rem = remark()
     .use(remarkMath, { singleDollarTextMath: true })
     .use(remarkGfm)
-    .use(remarkLfmFmt)
+    .use(remarkLfmFmt, { fwPunctuation })
     .use(remarkStringify, { bullet: "-", rule: "-" })
     .use(remarkDirective);
-
 
   if (config.clang?.enabled) {
     if (import.meta.env) {
@@ -55,12 +56,15 @@ const formatSolution = async (sourceStr, config = {}) => {
  * clang-format is not supported.
  *
  * @param {string} sourceStr
+ * @param {Config | undefined} config
  */
-const formatSolutionSync = (sourceStr) => {
+const formatSolutionSync = (sourceStr, config = {}) => {
+  const { fwPunctuation = true } = config;
+
   const file = remark()
     .use(remarkMath, { singleDollarTextMath: true })
     .use(remarkGfm)
-    .use(remarkLfmFmt)
+    .use(remarkLfmFmt, { fwPunctuation })
     .use(remarkStringify, { bullet: "-", rule: "-" })
     .use(remarkDirective)
     .processSync(sourceStr);

@@ -4,13 +4,16 @@ export type Config = {
         enabled?: boolean;
         config?: string;
     };
+    fwPunctuation?: boolean
 };
+
 /**
  * @typedef {{
  *   clang?: {
  *     enabled?: boolean,
  *     config?: string
- *   }
+ *   };
+ *   fwPunctuation?: boolean
  *  }} Config
  */
 /**
@@ -23,4 +26,4 @@ export function formatSolution(sourceStr: string, config?: Config): Promise<stri
  *
  * @param {string} sourceStr
  */
-export function formatSolutionSync(sourceStr: string): string;
+export function formatSolutionSync(sourceStr: string, config?: Config): string;

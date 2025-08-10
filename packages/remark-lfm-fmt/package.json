@@ -17,13 +17,12 @@
   "author": "Imken Luo <me@imken.moe>",
   "license": "MIT",
   "dependencies": {
-    "pangu": "^4.0.7",
+    "pangu": "^7.2.0",
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
-    "@types/mdast": "^4.0.3",
-    "@types/node": "^20.10.4",
-    "@types/pangu": "^4.0.2",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^22",
     "mdast-util-directive": "^3.1.0",
     "mdast-util-math": "^3.0.0",
     "remark": "^15.0.1",
