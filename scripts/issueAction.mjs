@@ -2,7 +2,6 @@ import { Octokit } from "octokit";
 import { formatSolution } from "@imkdown/lg-solution-formatter";
 import * as fs from "node:fs";
 import { execSync } from "node:child_process";
-import { wrap } from "node:module";
 
 const context = {
   token: process.env.GITHUB_TOKEN,
@@ -36,7 +35,7 @@ const inputContent = inputMatch[1].trim() + "\n";
 const expectedContent = expectedMatch ? expectedMatch[1].trim() : null;
 
 (async () => {
-  const afterComment = `\n\n---\n\n由 Isokulas Bot 生成上述报告。\n`;
+  const afterComment = `\n\n---\n\n由 Isokulas Bot 生成上述报告。请不要频繁编辑 issue。\n`;
 
   /**
    * @param {string} title
