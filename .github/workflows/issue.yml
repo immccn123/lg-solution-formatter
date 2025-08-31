@@ -42,6 +42,7 @@ jobs:
             const expectedContent = expectedMatch ? expectedMatch[1].trim() : null;
 
             try {
+              process.chdir(process.env.GITHUB_WORKSPACE);
               const { formatSolution } = await import("@imkdown/lg-solution-formatter");
               
               const formattedContent = await formatSolution(inputContent, { fwPunctuation: true });
