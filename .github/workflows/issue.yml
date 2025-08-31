@@ -1,0 +1,103 @@
+name: Format Solution Issue Handler
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  handle-format-issue:
+    if: contains(github.event.issue.labels.*.name, 'bug')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Process issue and generate comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.BOT_PAT_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+
+            const issueBody = context.payload.issue.body;
+
+            const inputMatch = issueBody.match(/\*\*输入\*\*\s*```(?:markdown)?\s*([\s\S]*?)\s*```/i);
+            const expectedMatch = issueBody.match(/\*\*预期输出\*\*\s*```(?:markdown)?\s*([\s\S]*?)\s*```/i);
+
+            if (!inputMatch) {
+              console.log('No input content found, ignoring this issue');
+              return;
+            }
+
+            const inputContent = inputMatch[1].trim();
+            const expectedContent = expectedMatch ? expectedMatch[1].trim() : null;
+
+            try {
+              const { formatSolution } = await import("@imkdown/lg-solution-formatter");
+              
+              const formattedContent = await formatSolution(inputContent, { fwPunctuation: true });
+              
+              const generateDiff = (original, formatted, title) => {
+                fs.writeFileSync('/tmp/original.md', original);
+                fs.writeFileSync('/tmp/formatted.md', formatted);
+                
+                try {
+                  const diffOutput = execSync('diff -u /tmp/original.md /tmp/formatted.md', { encoding: 'utf8' });
+                  return `## ${title}\n\`\`\`diff\n${diffOutput}\n\`\`\`\n\n`;
+                } catch (error) {
+                  if (error.stdout) {
+                    return `## ${title}\n\`\`\`diff\n${error.stdout}\n\`\`\`\n\n`;
+                  }
+                  return `## ${title}\n无差异\n\n`;
+                }
+              };
+              
+              let comment = `## 格式化处理结果\n\n`;
+              
+              if (expectedContent) {
+                comment += generateDiff(expectedContent, formattedContent, '与预期输出的差异');
+              }
+              
+              comment += generateDiff(inputContent, formattedContent, '与输入的差异');
+              
+              comment += `## 格式化结果源码\n\`\`\`markdown\n${formattedContent}\n\`\`\`\n\n`;
+              
+              comment += `## 格式化结果预览\n${formattedContent}\n\n`;
+              
+              if (expectedContent) {
+                comment += `## 预期输出预览\n${expectedContent}\n\n`;
+              }
+                            
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+              
+            } catch (error) {
+              console.error('格式化错误:', error);
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `格式化处理失败：\n\`\`\`\n${error.message}\n\`\`\`\n`
+              });
+            }
