@@ -2,6 +2,7 @@ import { Octokit } from "octokit";
 import { formatSolution } from "@imkdown/lg-solution-formatter";
 import * as fs from "node:fs";
 import { execSync } from "node:child_process";
+import { wrap } from "node:module";
 
 const context = {
   token: process.env.GITHUB_TOKEN,
@@ -31,10 +32,19 @@ if (!inputMatch) {
   process.exit(0);
 }
 
-const inputContent = inputMatch[1].trim();
+const inputContent = inputMatch[1].trim() + "\n";
 const expectedContent = expectedMatch ? expectedMatch[1].trim() : null;
 
 (async () => {
+  const afterComment = `\n\n---\n\n由 Isokulas Bot 生成上述报告。\n`;
+
+  /**
+   * @param {string} title
+   * @param {string} content
+   */
+  const wrap = (title, content) =>
+    `<details>\n<summary>${title}</summary>\n\n${content}\n</details>\n\n`;
+
   try {
     const formattedContent = await formatSolution(inputContent, {
       fwPunctuation: true,
@@ -54,34 +64,44 @@ const expectedContent = expectedMatch ? expectedMatch[1].trim() : null;
           "diff -u /tmp/original.md /tmp/formatted.md",
           { encoding: "utf8" }
         );
-        return `## ${title}\n\`\`\`diff\n${diffOutput}\n\`\`\`\n\n`;
+        return wrap(title, "```diff\n" + diffOutput + "\n```");
       } catch (/** @type {*} */ error) {
         if (error.stdout) {
-          return `## ${title}\n\`\`\`diff\n${error.stdout}\n\`\`\`\n\n`;
+          return wrap(title, "```diff\n" + error.stdout + "\n```");
         }
-        return `## ${title}\n无差异\n\n`;
+        return `${title}：无差异\n\n`;
       }
     };
 
-    let comment = `## 格式化处理结果\n\n`;
+    let comment = `格式化处理结果如下：\n\n`;
 
     if (expectedContent) {
       comment += generateDiff(
-        expectedContent,
+        expectedContent + "\n",
         formattedContent,
         "与预期输出的差异"
       );
     }
 
     comment += generateDiff(inputContent, formattedContent, "与输入的差异");
-
-    comment += `## 格式化结果源码\n\`\`\`markdown\n${formattedContent}\n\`\`\`\n\n`;
-
-    comment += `## 格式化结果预览\n${formattedContent}\n\n`;
+    comment += wrap(
+      "格式化结果源码",
+      `\`\`\`markdown\n${formattedContent}\n\`\`\``
+    );
+    comment += wrap("格式化结果预览", formattedContent);
 
     if (expectedContent) {
-      comment += `## 预期输出预览\n${expectedContent}\n\n`;
+      comment += wrap("预期输出预览", expectedContent);
     }
+
+    comment += afterComment;
+
+    await octokit.rest.reactions.createForIssue({
+      owner: context.repo.owner,
+      repo: context.repo.name,
+      issue_number: context.issue.number,
+      content: "eyes", // 👀
+    });
 
     await octokit.rest.issues.createComment({
       owner: context.repo.owner,
@@ -96,7 +116,10 @@ const expectedContent = expectedMatch ? expectedMatch[1].trim() : null;
       owner: context.repo.owner,
       repo: context.repo.name,
       issue_number: context.issue.number,
-      body: `格式化处理失败：\n\`\`\`\n${error.message}\n\`\`\`\n`,
+      body:
+        `格式化处理出现错误\n\n` +
+        wrap("详情", `\`\`\`\n${error.message}\n\`\`\``) +
+        afterComment,
     });
   }
 })();
