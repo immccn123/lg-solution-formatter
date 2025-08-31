@@ -5,6 +5,7 @@ import {
   isCjkPunctuation,
   mathReplaceRules,
   punctuationCjkToFw,
+  textPostprocessRules,
   textPreprocessRules,
   toFw,
   toFwExtraRules,
@@ -22,13 +23,13 @@ export const formatText = (text, fwPunctuation) => {
   let res = pangu.spacingText(removeDuplSpaces(text.trim()));
 
   textPreprocessRules.forEach((rule) => {
-    // @ts-ignore 有点搞不明白为什么这里必须针对 typeof rule.replace === "string" 条件分开写一样的东西
+    // @ts-expect-error 有点搞不明白为什么这里必须针对 typeof rule.replace === "string" 条件分开写一样的东西
     res = res.replace(rule.pattern, rule.replace);
   });
 
   if (fwPunctuation) {
     toFwExtraRules.forEach((rule) => {
-      // @ts-ignore 同上
+      // @ts-expect-error 同上
       res = res.replace(rule.pattern, rule.replace);
     });
     res = punctuationCjkToFw(res);
@@ -37,6 +38,11 @@ export const formatText = (text, fwPunctuation) => {
     res = fwPunctuationToHw(res);
     if (!flag) res = res.trimEnd();
   }
+
+  textPostprocessRules.forEach((rule) => {
+    // @ts-expect-error
+    res = res.replace(rule.pattern, rule.replace);
+  });
 
   if (text.startsWith(" ")) res = " " + res;
   if (text.endsWith(" ")) res = res + " ";

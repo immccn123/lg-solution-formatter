@@ -147,6 +147,19 @@ export const textPreprocessRules = [
 /**
  * @type {ReplaceRule[]}
  *
+ * 文本后期处理替换规则
+ */
+export const textPostprocessRules = [
+  {
+    // see immccn123/lg-solution-formatter#102
+    pattern: CjkRgx(`(”) +({CJK})`, "g"),
+    replace: "$1$2",
+  },
+];
+
+/**
+ * @type {ReplaceRule[]}
+ *
  * 额外的全半角标点的替换规则
  */
 export const toFwExtraRules = [

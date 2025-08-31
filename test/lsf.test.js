@@ -1,5 +1,3 @@
-/// <reference types="vitest" />
-
 /**
  * @param {string} target
  */
@@ -36,14 +34,15 @@ const R = String.raw;
  *   target: string
  * }[]} testCases
  */
-function testAll(desc, testCases, fw = true) {
+function testAll(desc, testCases, fwPunctuation = true) {
   describe(desc, () => {
     testCases.forEach(({ name, source, target }) => {
       test.concurrent(name, async () => {
-        const fmtedSolution = await formatSolution(source, {
-          fwPunctuation: fw,
-        });
+        const fmtedSolution = await formatSolution(source, { fwPunctuation });
         expect(fmtedSolution).toMatch(targetRegExp(target));
+        expect(await formatSolution(fmtedSolution, { fwPunctuation })).toBe(
+          fmtedSolution
+        );
       });
     });
   });
@@ -153,17 +152,20 @@ const markdownTestCasesFw = [
     target: "An English sentence with $\\rm{Math}$, and a comma.",
   },
   {
-    name: "中文排版中粗体字边缘不应添加空格 (issue #4)",
+    // immccn123/lg-solution-formatter#4
+    name: "中文排版中粗体字边缘不应添加空格 (#4)",
     source: "1. 两种运算并列时，`&` 运算**优先**于 `|` 运算。",
     target: "1. 两种运算并列时，`&` 运算**优先**于 `|` 运算。",
   },
   {
     name: "<1/2> 数学公式语法分析正确性",
+    // [NOI 2022] 众数
     source: String.raw`$3 \ m \ x_1 \ x_2 \ x_m$：将 $x_1, x_2, \ldots, x_m$ 号序列顺次拼接，得到一个新序列，并询问其众数。如果不存在满足上述条件的数，则返回 $-1$。数据保证对于任意 $1 \le i \le m$，$x_i$ 是一个仍然存在的序列，$1 \le x_i \le n + q$，且拼接得到的序列非空。**注意：不保证 $\boldsymbol{x_1, \ldots, x_m}$ 互不相同，询问中的合并操作不会对后续操作产生影响。**`,
     target: String.raw`$3 \ m \ x_1 \ x_2 \ x_m$：将 $x_1, x_2, \ldots, x_m$ 号序列顺次拼接，得到一个新序列，并询问其众数。如果不存在满足上述条件的数，则返回 $-1$。数据保证对于任意 $1 \le i \le m$，$x_i$ 是一个仍然存在的序列，$1 \le x_i \le n + q$，且拼接得到的序列非空。**注意：不保证 $\boldsymbol{x_1, \ldots, x_m}$ 互不相同，询问中的合并操作不会对后续操作产生影响。**`,
   },
   {
     name: "<2/2> 数学公式语法分析正确性",
+    // [NOI 2022] 众数
     source: String.raw`$4 \ x_1 \ x_2 \ x_3$：新建一个编号为 $x_3$ 的序列，其为 $x_1$ 号序列后顺次添加 $x_2$ 号序列中数字得到的结果，然后删除 $x_1, x_2$ 对应的序列。此时序列 $x_3$ 视为存在，而序列 $x_1, x_2$ 被视为不存在，在后续操作中也不会被再次使用。保证 $1 \le x_1, x_2, x_3 \le n + q$、$x_1 \ne x_2$、序列 $x_1, x_2$ 在操作前存在、且在操作前没有序列使用过编号 $x_3$。`,
     target: String.raw`$4 \ x_1 \ x_2 \ x_3$：新建一个编号为 $x_3$ 的序列，其为 $x_1$ 号序列后顺次添加 $x_2$ 号序列中数字得到的结果，然后删除 $x_1, x_2$ 对应的序列。此时序列 $x_3$ 视为存在，而序列 $x_1, x_2$ 被视为不存在，在后续操作中也不会被再次使用。保证 $1 \le x_1, x_2, x_3 \le n + q$、$x_1 \ne x_2$、序列 $x_1, x_2$ 在操作前存在、且在操作前没有序列使用过编号 $x_3$。`,
   },
@@ -206,6 +208,13 @@ const markdownTestCasesFw = [
     name: "句末点号改为句号",
     source: R`OK.现在我们得到了答案.`,
     target: R`OK. 现在我们得到了答案。`,
+  },
+  {
+    // immccn123/lg-solution-formatter#102
+    name: "删去/不保留引号后多余空格 (#102)",
+    // 成都市人民政府《成都市国土空间总体规划（2021-2035 年）》第 7 页
+    source: R`“两水相依” 指西部岷江水网和东部沱江水网相依，河流水系呈现 “西密东疏” 和 “西渠东塘” 的特征。`,
+    target: R`“两水相依”指西部岷江水网和东部沱江水网相依，河流水系呈现“西密东疏”和“西渠东塘”的特征。`,
   },
 ];
 
@@ -353,7 +362,8 @@ const markdownTestCasesHw = [
     target: "中文 English! 你好! 中文 English, 你好!",
   },
   {
-    name: "中文排版中粗体字边缘不应添加空格 (issue #4)",
+    // immccn123/lg-solution-formatter#4
+    name: "中文排版中粗体字边缘不应添加空格 (#4)",
     source: "1. 两种运算并列时，`&` 运算**优先**于 `|` 运算。",
     target: "1. 两种运算并列时, `&` 运算**优先**于 `|` 运算.",
   },
@@ -364,6 +374,7 @@ const markdownTestCasesHw = [
   },
   {
     name: "数学公式前后标点分析正确性",
+    // [NOI 2022] 众数
     source: String.raw`$3 \ m \ x_1 \ x_2 \ x_m$：将 $x_1, x_2, \ldots, x_m$ 号序列顺次拼接，得到一个新序列，并询问其众数。如果不存在满足上述条件的数，则返回 $-1$。数据保证对于任意 $1 \le i \le m$，$x_i$ 是一个仍然存在的序列，$1 \le x_i \le n + q$，且拼接得到的序列非空。**注意：不保证 $\boldsymbol{x_1, \ldots, x_m}$ 互不相同，询问中的合并操作不会对后续操作产生影响。**`,
     target: String.raw`$3 \ m \ x_1 \ x_2 \ x_m$: 将 $x_1, x_2, \ldots, x_m$ 号序列顺次拼接, 得到一个新序列, 并询问其众数. 如果不存在满足上述条件的数, 则返回 $-1$. 数据保证对于任意 $1 \le i \le m$, $x_i$ 是一个仍然存在的序列, $1 \le x_i \le n + q$, 且拼接得到的序列非空. **注意: 不保证 $\boldsymbol{x_1, \ldots, x_m}$ 互不相同, 询问中的合并操作不会对后续操作产生影响.**`,
   },
