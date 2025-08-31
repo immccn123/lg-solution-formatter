@@ -43,7 +43,7 @@ jobs:
 
             try {
               process.chdir(process.env.GITHUB_WORKSPACE);
-              const { formatSolution } = await import("@imkdown/lg-solution-formatter");
+              const { formatSolution } = await import("${{ github.workspace }}/packages/lg-solution-formatter");
               
               const formattedContent = await formatSolution(inputContent, { fwPunctuation: true });
               
