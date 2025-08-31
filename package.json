@@ -11,9 +11,11 @@
   "author": "Imken Luo <me@imken.moe>",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^22.17.1",
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@imkdown/lg-solution-formatter": "workspace:^"
+    "@imkdown/lg-solution-formatter": "workspace:^",
+    "octokit": "^5.0.3"
   }
 }
