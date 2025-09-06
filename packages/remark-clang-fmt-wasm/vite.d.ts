@@ -1,5 +1,6 @@
 declare module "@wasm-fmt/clang-format/clang-format-vite.js" {
   export * from "@wasm-fmt/clang-format";
+  export { default } from "@wasm-fmt/clang-format";
 }
 
 declare module "@imkdown/remark-clang-fmt-wasm/vite.js" {
@@ -15,7 +16,7 @@ declare module "@imkdown/remark-clang-fmt-wasm/vite.js" {
 }
 
 declare module "@imkdown/remark-clang-fmt-wasm/node.js" {
-  export * from "@imkdown/remark-clang-fmt-wasm/vite.js"
+  export * from "@imkdown/remark-clang-fmt-wasm/vite.js";
   export default function remarkClangFmtWasm(
     config?: string
   ): (tree: Root) => Promise<void>;

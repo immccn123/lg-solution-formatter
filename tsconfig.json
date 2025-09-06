@@ -2,7 +2,6 @@
   "compilerOptions": {
     "checkJs": true,
     "declaration": true,
-    "emitDeclarationOnly": true,
     "exactOptionalPropertyTypes": true,
     "lib": ["ES2020", "ESNext"],
     "module": "ES2020",
@@ -11,7 +10,9 @@
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2020",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "noEmit": true
   },
-  "exclude": ["coverage/", "node_modules/", "**/example.js"]
+  "exclude": ["coverage/", "node_modules/", "**/example.js"],
+  "include": ["test/*.js", "packages/**/*.js"]
 }

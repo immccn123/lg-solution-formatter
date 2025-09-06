@@ -18,6 +18,9 @@ importers:
       '@types/node':
         specifier: ^22.17.1
         version: 22.17.1
+      typescript:
+        specifier: ^5.5.4
+        version: 5.5.4
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@22.17.1)(lightningcss@1.26.0)
@@ -63,7 +66,7 @@ importers:
         version: 5.0.0
     devDependencies:
       '@types/mdast':
-        specifier: ^4.0.3
+        specifier: ^4.0.4
         version: 4.0.4
       vfile:
         specifier: ^6.0.3
