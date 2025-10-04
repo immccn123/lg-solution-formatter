@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-ignore
 import CodeMirror from "vue-codemirror6";
 
 import { basicSetup } from "codemirror";
