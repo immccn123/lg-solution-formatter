@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// @ts-ignore
 import CodeMirror from "vue-codemirror6";
 
 import { basicSetup } from "codemirror";
@@ -15,6 +14,7 @@ import { useStore } from "./store";
 import { storeToRefs } from "pinia";
 import Config from "./components/Config.vue";
 
+// @ts-ignore
 let lastTimeout: number = 0;
 
 const store = useStore();
@@ -44,6 +44,7 @@ const formatRaw = async () => {
 
   showDone.value = true;
   clearTimeout(lastTimeout);
+  // @ts-ignore
   lastTimeout = setTimeout(() => (showDone.value = false), 1000);
   formatting.value = false;
 };
