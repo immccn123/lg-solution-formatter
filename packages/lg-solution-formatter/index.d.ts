@@ -5,6 +5,7 @@ export type Config = {
         config?: string;
     };
     fwPunctuation?: boolean
+    rlfConfig?: import("@imkdown/remark-lfm-fmt").Config
 };
 
 /**

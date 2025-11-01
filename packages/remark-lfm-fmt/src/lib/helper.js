@@ -50,11 +50,15 @@ export const formatText = (text, fwPunctuation) => {
   return res;
 };
 
-/** @param {string} tex */
-export const formatMath = (tex) => {
+/**
+ * @param {string} tex
+ * @param {import("./rule.js").MathFormatRules[]} enabledRules
+ */
+export const formatMath = (tex, enabledRules) => {
   let res = tex.trim();
 
-  mathReplaceRules.forEach((rule) => {
+  enabledRules.forEach((ruleId) => {
+    const rule = mathReplaceRules[ruleId];
     // @ts-ignore 同上
     res = res.replace(rule.pattern, rule.replace);
   });

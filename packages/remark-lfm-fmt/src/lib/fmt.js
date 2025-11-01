@@ -12,19 +12,26 @@ import {
   formatMath,
   formatText as _formatText,
 } from "./helper.js";
-import { shouldAddSpace } from "./rule.js";
+import { mathReplaceRules, shouldAddSpace } from "./rule.js";
 import { visit } from "unist-util-visit";
 
 /**
  * @typedef Config
  *   @property {boolean} [fwPunctuation=true]
+ *   @property {{math?: import("./rule.js").MathFormatRules[]}} [enabledRules]
  */
 
 /**
  * @param {Config} config
  */
 export default function remarkLfmFmt(config = {}) {
-  const { fwPunctuation = true } = config;
+  const { fwPunctuation = true, enabledRules = { math: [] } } = config;
+  const enabledMathRules =
+    enabledRules.math ??
+    /** @type {import("./rule.js").MathFormatRules[]} */ (
+      Object.keys(mathReplaceRules)
+    );
+
   /** @param {string} text */
   const formatText = (text) => _formatText(text, fwPunctuation);
 
@@ -140,7 +147,7 @@ export default function remarkLfmFmt(config = {}) {
 
       case "inlineMath":
       case "math": {
-        node.value = formatMath(node.value);
+        node.value = formatMath(node.value, enabledMathRules);
         break;
       }
 

@@ -5,6 +5,10 @@ const DEFAULT_CODE: string = `# 洛谷题解格式化器
 
 粘贴你的题解（不粘贴也可以），然后点击下方的“格式化并展示差异”看看效果！
 
+## 可以更改数学公式替换规则
+
+你可以在下方选项菜单中来看！例如，现在已经不会默认替换$*$到$\\times$了，但是 $gcd$ 仍会替换为$\\gcd$。
+
 ## 文字内容已经适配25年7月渲染更新
 
 ::cute-table{attr}
@@ -59,6 +63,7 @@ interface State {
   code: string;
   clangEnabled: boolean;
   clangConfig: string;
+  enabledMathRules: string[];
 }
 
 export const useStore = defineStore("counter", {
@@ -69,6 +74,21 @@ export const useStore = defineStore("counter", {
       code: DEFAULT_CODE,
       clangEnabled: false,
       clangConfig: CLANG_DEFAULT_CONFIG,
+      enabledMathRules: [
+        "fn/gcd",
+        "fn/min",
+        "fn/max",
+        "fn/log",
+        "fn/lca",
+        "fn/lcm",
+        "fn/mex",
+        "sym/double-arrow-implies",
+        "sym/arrow-left-gets",
+        "sym/arrow-right-to",
+        "sym/not-equal",
+        "sym/greater-equal",
+        "sym/less-equal",
+      ],
     } as State;
   },
   // could also be defined as

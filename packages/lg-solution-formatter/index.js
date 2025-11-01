@@ -16,12 +16,17 @@ import remarkGfm from "remark-gfm";
 import remarkDirective from "remark-directive";
 
 /**
+ * @typedef {import("@imkdown/remark-lfm-fmt").Config} RlfConfig
+ */
+
+/**
  * @typedef {{
  *   clang?: {
  *     enabled?: boolean,
  *     config?: string
  *   };
  *   fwPunctuation?: boolean;
+ *   rlfConfig?: RlfConfig;
  *  }} Config
  */
 
@@ -30,11 +35,11 @@ import remarkDirective from "remark-directive";
  * @param {Config | undefined} config
  */
 const formatSolution = async (sourceStr, config = {}) => {
-  const { fwPunctuation = true } = config;
+  const { fwPunctuation = true, rlfConfig } = config;
   let rem = remark()
     .use(remarkMath, { singleDollarTextMath: true })
     .use(remarkGfm)
-    .use(remarkLfmFmt, { fwPunctuation })
+    .use(remarkLfmFmt, { ...rlfConfig, fwPunctuation })
     .use(remarkStringify, { bullet: "-", rule: "-" })
     .use(remarkDirective);
 

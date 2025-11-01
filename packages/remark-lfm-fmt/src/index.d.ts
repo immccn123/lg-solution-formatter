@@ -1,1 +1,1 @@
-export { default } from "./lib/fmt.js";
+export { default, Config } from "./lib/fmt.js";
