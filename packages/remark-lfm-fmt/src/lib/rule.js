@@ -58,45 +58,6 @@ export const fwPunctuationToHw = (text) =>
     .replace(/？\s*/g, "? ")
     .replace(/。\s*/g, ". ");
 
-export const mathReplaceRules = {
-  "sym/star-to-times": { pattern: /\*/g, replace: " \\times " }, // * -> 乘号
-  "sym/less-equal": { pattern: /<=/g, replace: " \\le " }, // 小于等于
-  "sym/greater-equal": { pattern: />=/g, replace: " \\ge " }, // 大于等于
-  "sym/not-equal": { pattern: /\!=/g, replace: " \\neq " }, // 不等于
-  "sym/double-equal-to-single": { pattern: /==/g, replace: " = " }, // 不允许 ==
-  "sym/arrow-right-to": { pattern: /(-+)>/g, replace: " \\to " }, // ->
-  "sym/arrow-left-gets": { pattern: /<(-+)/g, replace: " \\gets " }, // <-
-  "sym/double-arrow-implies": { pattern: /(=+)>/g, replace: " \\Rightarrow " }, // =>
-  "fn/gcd": { pattern: /(?<![\\{}])gcd/g, replace: " \\gcd " }, // gcd -> \gcd
-  "fn/min": { pattern: /(?<![\\{}])min/g, replace: " \\min " },
-  "fn/max": { pattern: /(?<![\\{}])max/g, replace: " \\max " },
-  "fn/log": { pattern: /(?<![\\{}])log/g, replace: " \\log " },
-  "fn/lca": {
-    pattern: /(?<!\\operatorname{)LCA(?!})/g,
-    replace: " \\operatorname{LCA}",
-  },
-  "fn/lcm": {
-    pattern: /(?<!\\operatorname{)lcm(?!})/g,
-    replace: " \\operatorname{lcm}",
-  },
-  "fn/mex": {
-    pattern: /(?<!\\operatorname{)MEX(?!})/g,
-    replace: " \\operatorname{MEX}",
-  },
-  "syn/array-to-subscript": /** @type {ReplaceRule} */ ({
-    pattern: /(?<!\\|[a-zA-Z])([a-zA-Z]+)((\[([^\]])+?\])+)/g,
-    replace: (_, name, items) => {
-      return (
-        name + "_{" + items.replace(/\[([^\]]+?)\]/g, "$1,").slice(0, -1) + "}"
-      );
-    },
-  }), // dp[i][j][k] = dp[i][j][k - 1] + a[i]
-};
-
-/**
- * @typedef {keyof typeof mathReplaceRules} MathFormatRules 
- */
-
 /**
  * @param {string} left
  * @param {string} right
@@ -181,3 +142,42 @@ export const toFwExtraRules = [
     replace: (match) => "…".repeat(Math.min(Math.ceil(match.length / 3), 2)),
   },
 ];
+
+export const mathReplaceRules = {
+  "sym/star-to-times": { pattern: /\*/g, replace: " \\times " }, // * -> 乘号
+  "sym/less-equal": { pattern: /<=/g, replace: " \\le " }, // 小于等于
+  "sym/greater-equal": { pattern: />=/g, replace: " \\ge " }, // 大于等于
+  "sym/not-equal": { pattern: /\!=/g, replace: " \\neq " }, // 不等于
+  "sym/double-equal-to-single": { pattern: /==/g, replace: " = " }, // 不允许 ==
+  "sym/arrow-right-to": { pattern: /(-+)>/g, replace: " \\to " }, // ->
+  "sym/arrow-left-gets": { pattern: /<(-+)/g, replace: " \\gets " }, // <-
+  "sym/double-arrow-implies": { pattern: /(=+)>/g, replace: " \\Rightarrow " }, // =>
+  "fn/gcd": { pattern: /(?<![\\{}])gcd/g, replace: " \\gcd " }, // gcd -> \gcd
+  "fn/min": { pattern: /(?<![\\{}])min/g, replace: " \\min " },
+  "fn/max": { pattern: /(?<![\\{}])max/g, replace: " \\max " },
+  "fn/log": { pattern: /(?<![\\{}])log/g, replace: " \\log " },
+  "fn/lca": {
+    pattern: /(?<!\\operatorname{)LCA(?!})/g,
+    replace: " \\operatorname{LCA}",
+  },
+  "fn/lcm": {
+    pattern: /(?<!\\operatorname{)lcm(?!})/g,
+    replace: " \\operatorname{lcm}",
+  },
+  "fn/mex": {
+    pattern: /(?<!\\operatorname{)MEX(?!})/g,
+    replace: " \\operatorname{MEX}",
+  },
+  "syn/array-to-subscript": /** @type {ReplaceRule} */ ({
+    pattern: /(?<!\\|[a-zA-Z])([a-zA-Z]+)((\[([^\]])+?\])+)/g,
+    replace: (_, name, items) => {
+      return (
+        name + "_{" + items.replace(/\[([^\]]+?)\]/g, "$1,").slice(0, -1) + "}"
+      );
+    },
+  }), // dp[i][j][k] = dp[i][j][k - 1] + a[i]
+};
+
+/**
+ * @typedef {keyof typeof mathReplaceRules} MathFormatRules
+ */

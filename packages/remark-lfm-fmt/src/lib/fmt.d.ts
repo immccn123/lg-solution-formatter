@@ -7,6 +7,6 @@ export type RootContent = import("mdast").RootContent;
 export type Config = {
   fwPunctuation?: boolean;
   enabledRules?: {
-    math?: MathFormatRules[] // TODO: static type check
+    math?: MathFormatRules[]
   }
 };
