@@ -166,7 +166,7 @@ watch(showFormatted, async () => {
     </div>
 
     <p style="text-align: center; font-size: small">
-      本 web 应用在 AGPL v3 或更新版本下授权，本项目的其他部分在 MIT
+      QQ 群号：1038987440；本 web 应用在 AGPL v3 或更新版本下授权，本项目的其他部分在 MIT
       许可证下授权。
       <a
         href="https://github.com/immccn123/lg-solution-formatter"
