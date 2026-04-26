@@ -27,7 +27,7 @@
     "default": "./index.js"
   },
   "devDependencies": {
-    "esbuild": "^0.19.8",
+    "esbuild": "^0.25.0",
     "vite": "^6.4.2"
   }
 }
