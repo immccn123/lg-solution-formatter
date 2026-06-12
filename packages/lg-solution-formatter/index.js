@@ -12,6 +12,7 @@ import { remark } from "remark";
 import remarkMath from "remark-math";
 import remarkStringify from "remark-stringify";
 import remarkLfmFmt from "@imkdown/remark-lfm-fmt";
+import remarkMathLfmmod from "@imkdown/remark-math-lfmmod";
 import remarkGfm from "remark-gfm";
 import remarkDirective from "remark-directive";
 
@@ -39,6 +40,7 @@ const formatSolution = async (sourceStr, config = {}) => {
   let rem = remark()
     .use(remarkMath, { singleDollarTextMath: true })
     .use(remarkGfm)
+    .use(remarkMathLfmmod)
     .use(remarkLfmFmt, { ...rlfConfig, fwPunctuation })
     .use(remarkStringify, { bullet: "-", rule: "-" })
     .use(remarkDirective);
@@ -69,6 +71,7 @@ const formatSolutionSync = (sourceStr, config = {}) => {
   const file = remark()
     .use(remarkMath, { singleDollarTextMath: true })
     .use(remarkGfm)
+    .use(remarkMathLfmmod)
     .use(remarkLfmFmt, { fwPunctuation })
     .use(remarkStringify, { bullet: "-", rule: "-" })
     .use(remarkDirective)

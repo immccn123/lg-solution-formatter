@@ -1,25 +1,3 @@
-/**
- * @param {string} target
- */
-const targetRegExp = (target) => {
-  return RegExp(
-    target
-      .replaceAll("\\", "\\\\")
-      .replaceAll("$", "\\$")
-      .replaceAll(".", "\\.")
-      .replaceAll("?", "\\?")
-      .replaceAll("*", "\\*")
-      .replaceAll("+", "\\+")
-      .replaceAll("(", "\\(")
-      .replaceAll(")", "\\)")
-      .replaceAll("[", "\\[")
-      .replaceAll("]", "\\]")
-      .replaceAll("|", "\\|")
-      .replaceAll("{", "\\{")
-      .replaceAll("}", "\\}")
-  );
-};
-
 import { formatSolution } from "@imkdown/lg-solution-formatter";
 import { expect, test, describe } from "vitest";
 
@@ -39,7 +17,7 @@ function testAll(desc, testCases, fwPunctuation = true) {
     testCases.forEach(({ name, source, target }) => {
       test.concurrent(name, async () => {
         const fmtedSolution = await formatSolution(source, { fwPunctuation });
-        expect(fmtedSolution).toMatch(targetRegExp(target));
+        expect(fmtedSolution).toBe(target + '\n');
         expect(await formatSolution(fmtedSolution, { fwPunctuation })).toBe(
           fmtedSolution
         );
@@ -362,7 +340,7 @@ const markdownTestCasesHw = [
     target: "中文 English! 你好! 中文 English, 你好!",
   },
   {
-    // immccn123/lg-solution-formatter#4
+    // #4
     name: "中文排版中粗体字边缘不应添加空格 (#4)",
     source: "1. 两种运算并列时，`&` 运算**优先**于 `|` 运算。",
     target: "1. 两种运算并列时, `&` 运算**优先**于 `|` 运算.",
@@ -385,6 +363,58 @@ const markdownTestCasesHw = [
   },
 ];
 
+// #106 & #110
+const mathLfmTestCases = [
+  {
+    name: "独立成段的双美元公式：应被强转为标准的行间公式结构",
+    source: R`$$aaa$$`,
+    target: R`$$
+aaa
+$$`,
+  },
+
+  {
+    name: "独立成段的单美元带换行（保持 inlineMath）",
+    source: R`$
+aaa
+$`,
+    target: R`$aaa$`,
+  },
+  {
+    name: "双美元符号前后有正文文字（保持 inlineMath）",
+    source: R`前置文本 $$aaa$$ 后置文本`,
+    target: R`前置文本 $aaa$ 后置文本`,
+  },
+  {
+    name: "同一个段落里包含多个独立公式（=> inlineMath）",
+    source: R`$$aaa$$ 和 $$bbb$$`,
+    target: R`$aaa$ 和 $bbb$`,
+  },
+  {
+    name: "双美元符号前后带有空行（天然成段）：正常触发强转",
+    source: R`
+文字内容
+
+$$aaa$$
+
+文字内容`,
+    target: R`文字内容
+
+$$
+aaa
+$$
+
+文字内容`,
+  },
+  {
+    name: "独立成段的空双美元：应转为行间空公式",
+    source: R`$$$$`,
+    target: R`$$
+$$`,
+  },
+];
+
 testAll("<全角/默认配置> Markdown 杂项", markdownTestCasesFw);
 testAll("<半角配置> Markdown 杂项", markdownTestCasesHw, false);
 testAll("<全角/默认配置> 数学公式格式化", mathTestCasesFw);
+testAll("<全角/默认配置> 数学公式特色语法", mathLfmTestCases);

@@ -17,6 +17,7 @@
   "dependencies": {
     "@imkdown/remark-clang-fmt-wasm": "workspace:^",
     "@imkdown/remark-lfm-fmt": "workspace:^",
+    "@imkdown/remark-math-lfmmod": "workspace:^",
     "remark": "^15.0.1",
     "remark-directive": "^4.0.0",
     "remark-gfm": "^4.0.0",

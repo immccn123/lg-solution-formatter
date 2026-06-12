@@ -59,7 +59,7 @@ export const formatMath = (tex, enabledRules) => {
 
   enabledRules.forEach((ruleId) => {
     const rule = mathReplaceRules[ruleId];
-    // @ts-ignore 同上
+    // @ts-expect-error 同上
     res = res.replace(rule.pattern, rule.replace);
   });
 
