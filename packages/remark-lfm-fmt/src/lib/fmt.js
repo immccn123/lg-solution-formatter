@@ -89,15 +89,12 @@ export default function remarkLfmFmt(config = {}) {
           const prevNode = findLastDescendant(node.children[i - 1]);
           const currNode = findFirstDescendant(node.children[i]);
 
-          if (prevNode == undefined) console.log(node, i);
-          if (currNode == undefined) console.log(node, i);
-
           if (prevNode.type === "text") {
             if (currNode.type === "text") {
               const { left, right, addSpace, addSpaceNext } = concatToken(
                 prevNode.value,
                 currNode.value,
-                lastAddSpace
+                lastAddSpace,
               );
               prevNode.value = left;
               currNode.value = right;
@@ -191,7 +188,6 @@ export default function remarkLfmFmt(config = {}) {
       /** @type {import("mdast").PhrasingContent[]} */
       const newChildren = [];
       let currentText = "";
-
       // @ts-expect-error 有 children
       for (const child of node.children) {
         if (child.type === "text" || child.type === "textDirective") {

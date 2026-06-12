@@ -1,0 +1,25 @@
+{
+  "name": "@imkdown/remark-math-lfmmod",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "types": "./index.d.ts"
+    }
+  },
+  "keywords": [],
+  "author": "Imken Luo <me@imken.moe>",
+  "license": "MIT",
+  "packageManager": "pnpm@10.11.0",
+  "dependencies": {
+    "@types/mdast": "^4.0.4",
+    "mdast-util-math": "^3.0.0",
+    "unist-util-visit": "^5.0.0",
+    "vfile": "^6.0.3"
+  }
+}
