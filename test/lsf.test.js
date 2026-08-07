@@ -17,9 +17,9 @@ function testAll(desc, testCases, fwPunctuation = true) {
     testCases.forEach(({ name, source, target }) => {
       test.concurrent(name, async () => {
         const fmtedSolution = await formatSolution(source, { fwPunctuation });
-        expect(fmtedSolution).toBe(target + '\n');
+        expect(fmtedSolution).toBe(target + "\n");
         expect(await formatSolution(fmtedSolution, { fwPunctuation })).toBe(
-          fmtedSolution
+          fmtedSolution,
         );
       });
     });
@@ -193,6 +193,11 @@ const markdownTestCasesFw = [
     // 成都市人民政府《成都市国土空间总体规划（2021-2035 年）》第 7 页
     source: R`“两水相依” 指西部岷江水网和东部沱江水网相依，河流水系呈现 “西密东疏” 和 “西渠东塘” 的特征。`,
     target: R`“两水相依”指西部岷江水网和东部沱江水网相依，河流水系呈现“西密东疏”和“西渠东塘”的特征。`,
+  },
+  {
+    name: "[严格模式] token 间出现汉字时候的空格处理",
+    source: "这是 [一个超链接](https://example.com)",
+    target: "这是[一个超链接](https://example.com)",
   },
 ];
 

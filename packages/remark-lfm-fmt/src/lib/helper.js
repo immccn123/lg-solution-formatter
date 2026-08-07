@@ -72,8 +72,9 @@ export const formatMath = (tex, enabledRules) => {
  * @param {string} left
  * @param {string} right
  * @param {boolean} [addExtraSpace]
+ * @param {boolean} [strictMode]
  */
-export const concatToken = (left, right, addExtraSpace = false) => {
+export const concatToken = (left, right, addExtraSpace = false, strictMode = false) => {
   const tLeft = left.trimEnd(),
     tRight = right.trimStart();
 
@@ -96,11 +97,12 @@ export const concatToken = (left, right, addExtraSpace = false) => {
       addSpaceNext: false,
     };
 
+  // 汉字 *汉字*
   if (isCjk(leftEnd) && isCjk(rightBegin))
     return {
       left: tLeft,
       right: tRight,
-      addSpace: isTrimed || addExtraSpace,
+      addSpace: !strictMode && (isTrimed || addExtraSpace),
       addSpaceNext: addExtraSpace ? false : isTrimed,
     };
 

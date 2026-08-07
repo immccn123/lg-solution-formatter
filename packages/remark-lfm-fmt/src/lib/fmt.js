@@ -18,6 +18,7 @@ import { visit } from "unist-util-visit";
 /**
  * @typedef Config
  *   @property {boolean} [fwPunctuation=true]
+ *   @property {boolean} [strictMode=true]
  *   @property {{math?: import("./rule.js").MathFormatRules[]}} [enabledRules={}]
  */
 
@@ -25,7 +26,7 @@ import { visit } from "unist-util-visit";
  * @param {Config} config
  */
 export default function remarkLfmFmt(config = {}) {
-  const { fwPunctuation = true, enabledRules = {} } = config;
+  const { fwPunctuation = true, strictMode = true, enabledRules = {} } = config;
   const enabledMathRules =
     enabledRules.math ??
     /** @type {import("./rule.js").MathFormatRules[]} */ (
@@ -95,7 +96,9 @@ export default function remarkLfmFmt(config = {}) {
                 prevNode.value,
                 currNode.value,
                 lastAddSpace,
+                strictMode
               );
+
               prevNode.value = left;
               currNode.value = right;
               lastAddSpace = addSpaceNext;
